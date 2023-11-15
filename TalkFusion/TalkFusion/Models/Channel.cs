@@ -14,6 +14,9 @@ namespace TalkFusion.Models
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Channel user is mandatory")]
-        public int UserId { get; set; }
+        public int UserId { get; set;}
+
+        [Required(ErrorMessage = "Channel category is mandatory")]
+        public int CategoryId { get; set; }
     }
 }
