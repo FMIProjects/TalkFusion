@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using TalkFusion.Models;
 
 namespace TalkFusion.Data
 {
@@ -9,5 +10,7 @@ namespace TalkFusion.Data
             : base(options)
         {
         }
+
+        public DbSet<Category> Categories { get; set; }
     }
 }
