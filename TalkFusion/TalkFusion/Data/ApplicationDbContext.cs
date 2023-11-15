@@ -12,5 +12,7 @@ namespace TalkFusion.Data
         }
 
         public DbSet<Category> Categories { get; set; }
+
+        public DbSet<Channel> Channels { get; set; }
     }
 }

@@ -10,5 +10,6 @@ namespace TalkFusion.Models
         [Required(ErrorMessage = "Category name is mandatory")]
         public string Category_Name { get; set; }
 
+        public virtual ICollection<Channel> Channels { get; set; }
     }
 }
