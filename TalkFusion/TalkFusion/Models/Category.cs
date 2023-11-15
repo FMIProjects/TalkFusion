@@ -8,7 +8,7 @@ namespace TalkFusion.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Category name is mandatory")]
-        public string Category_Name { get; set; }
+        public string CategoryName { get; set; }
 
         public virtual ICollection<Channel> Channels { get; set; }
     }
