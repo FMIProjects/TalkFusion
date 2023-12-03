@@ -13,15 +13,13 @@ namespace TalkFusion.Models
         [Required(ErrorMessage = "Channel description is mandatory")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Channel user is mandatory")]
-        public int UserId { get; set;}
+        [Required(ErrorMessage = "Channel group is mandatory")]
+        public int GroupId { get; set; }
 
-        [Required(ErrorMessage = "Channel category is mandatory")]
-        public int CategoryId { get; set; }
+        public virtual Group group { get; set; }
 
-        public virtual Category Category { get; set; }
+        virtual public ICollection<Comment> Comments { get; set; }
 
-        public virtual ICollection<Comment> Comments { get; set; }
 
     }
 }
