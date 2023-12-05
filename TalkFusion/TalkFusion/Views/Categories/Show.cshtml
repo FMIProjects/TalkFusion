@@ -34,7 +34,7 @@
             routeValues: new { id = Model.Id }))
             {
                 
-                    @Html.Label("CategoryName","New category name")
+                    @Html.Label("CategoryName","Edit category name")
                     <br />
                     @Html.EditorFor(category=>category.CategoryName, new{htmlAttributes = new{ @class="form-control"}})
                 
