@@ -1,6 +1,4 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
     ViewBag.PageTitle = "Category list";
 }
@@ -9,17 +7,17 @@
     <h1>@ViewBag.PageTitle</h1>
 </div>
 
-<br />
-    
-<a href="Categories/New" class="btn btn-success">Add new category</a>
-<br />
-
-<br />
+<br /><br />
 
 @if (ViewBag.Message != null)
 {
     <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
 }
+    
+<a href="Categories/New" class="btn btn-success">Add new category</a>
+<br /><br />
+
+
 
 @foreach(var category in ViewBag.Categories)
 {
@@ -27,11 +25,11 @@
     <div class="card">
         <div class="card-body">
 
-            <h2>@category.CategoryName</h2>
+            <h3>@category.CategoryName</h3>
 
             <br /><br />
 
-            <div class="d-flex justify-content-between  flex-row-reverse">
+            <div class="d-flex justify-content-between flex-row-reverse">
                
                 <a href="Categories/Show/@category.Id" class="btn btn-success ml-auto">See category</a>
 

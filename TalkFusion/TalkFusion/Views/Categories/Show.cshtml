@@ -1,5 +1,67 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model TalkFusion.Models.Category
 @{
+    ViewBag.Title="Category show";
 }
+
+<div class="text-center">
+    <h1>@ViewBag.Title</h1>
+</div>
+
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+}
+
+<br />
+<div class="card">
+
+    <div class="card-body">
+
+        <h3>@Model.CategoryName</h3>
+        <br />
+
+        
+
+        <!--flex pentru butoane-->
+        <div class="d-flex flex-end justify-content-between ">
+
+            <!--form pentru edit-->
+            @using (Html.BeginForm(actionName: "Edit",
+            controllerName: "Categories",
+            method: FormMethod.Post,
+            routeValues: new { id = Model.Id }))
+            {
+                
+                    @Html.Label("CategoryName","New category name")
+                    <br />
+                    @Html.EditorFor(category=>category.CategoryName, new{htmlAttributes = new{ @class="form-control"}})
+                
+
+                <br />
+                <button  class="btn btn-success mb-2" type="submit">Edit Category</button>
+            }
+
+            <!--form pentru delete-->
+
+            @using(Html.BeginForm(actionName:"Delete",
+            controllerName:"Categories",
+            method:FormMethod.Post,
+            routeValues: new{ id=Model.Id})){
+                <button class="btn btn-danger" type="submit">Delete Category</button>
+            }
+
+        </div>
+    </div>
+
+    @if(Model.Groups != null)
+    {
+        @foreach(var group in Model.Groups)
+        {
+        
+        }
+    }
+    
+
+</div>

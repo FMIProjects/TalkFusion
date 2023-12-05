@@ -31,5 +31,51 @@ namespace TalkFusion.Controllers
 
             return View();
         }
+
+
+        public IActionResult Show(int id)
+        {
+            Category shownCategory = db.Categories.Find(id);
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Message = TempData["message"];
+            }
+
+            return View(shownCategory);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, Category requestedCategory)
+        {
+            Category oldCategory= db.Categories.Find(id);
+
+            if (ModelState.IsValid)
+            {
+                oldCategory.CategoryName=requestedCategory.CategoryName;
+                db.SaveChanges();
+
+                TempData["message"] = "The category named: " + oldCategory.CategoryName + " was successfully edited.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                ViewBag.Category= requestedCategory;
+                TempData["message"] = "Category name is not valid.";
+                return RedirectToAction("Show", new { id = oldCategory.Id });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult Delete(int id) {
+            Category category = db.Categories.Find(id);
+
+            TempData["message"] = "The category named: " + category.CategoryName + " has been successfully deleted.";
+
+            db.Categories.Remove(category);
+            db.SaveChanges();
+            
+            return RedirectToAction("Index");
+        }
     }
 }
