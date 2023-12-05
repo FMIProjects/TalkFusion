@@ -25,5 +25,28 @@ namespace TalkFusion.Controllers
 
             return View();
         }
+
+        public IActionResult Show(int id)
+        {
+            var group = db.Groups.Find(id);
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Message = TempData["message"];
+            }
+
+            return View(group);
+        }
+
+        public IActionResult Edit(int id) {
+
+            var group = db.Groups.Find(id);
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Message = TempData["message"];
+            }
+            return View(group);
+        }
     }
 }

@@ -1,8 +1,43 @@
 ﻿
 @{
-    ViewBag.pageTitle="Group list"
+    ViewBag.pageTitle = "Group list";
 }
 
 <div class="text-center">
     <h1>@ViewBag.pageTitle</h1>
 </div>
+
+
+<a href="Groups/New" class="btn btn-success">Add a new Group</a>
+<br />
+
+
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+}
+
+<br />
+@foreach(var group in ViewBag.Groups)
+{
+    <div class="card" >
+        <div class="card-body">
+
+            <h2>@group.Title</h2>
+            <br>
+
+            <p>@group.Description</p>
+            <br>
+
+            <div class="d-flex justify-content-between justify-content-end flex-column">
+
+                <a href="/Groups/Edit/@group.Id"  class="btn btn-success">Edit group</a>
+                <a href="/Groups/Show/@group.Id" class="btn btn-success">See group</a>
+                <a href="/Groups/Delete/@group.Id" class="btn btn-danger">Delete group</a>
+
+            </div>
+
+        </div>
+    </div>
+    <br />
+}
