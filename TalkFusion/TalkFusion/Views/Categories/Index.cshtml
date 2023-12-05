@@ -5,7 +5,15 @@
     ViewBag.PageTitle = "Category list";
 }
 
-<h1>@ViewBag.PageTitle</h1>
+<div class="text-center">
+    <h1>@ViewBag.PageTitle</h1>
+</div>
+
+<br />
+    
+<a href="Categories/New" class="btn btn-success">Add new category</a>
+<br />
+
 <br />
 
 @if (ViewBag.Message != null)
@@ -15,7 +23,23 @@
 
 @foreach(var category in ViewBag.Categories)
 {
-    <h2>@category.CategoryName</h2>
+
+    <div class="card">
+        <div class="card-body">
+
+            <h2>@category.CategoryName</h2>
+
+            <br /><br />
+
+            <div class="d-flex justify-content-between  flex-row-reverse">
+               
+                <a href="Categories/Show/@category.Id" class="btn btn-success ml-auto">See category</a>
+
+            </div>
+        </div>
+        
+    </div>
+    
     <br /> <br />
 }
 
