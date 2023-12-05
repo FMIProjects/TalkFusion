@@ -4,6 +4,7 @@ using TalkFusion.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 
 namespace TalkFusion.Controllers
 {
@@ -50,7 +51,7 @@ namespace TalkFusion.Controllers
         {
             Category oldCategory= db.Categories.Find(id);
 
-            if (ModelState.IsValid)
+            try
             {
                 oldCategory.CategoryName=requestedCategory.CategoryName;
                 db.SaveChanges();
@@ -58,13 +59,45 @@ namespace TalkFusion.Controllers
                 TempData["message"] = "The category named: " + oldCategory.CategoryName + " was successfully edited.";
                 return RedirectToAction("Index");
             }
-            else
+            catch(Exception e)
             {
                 ViewBag.Category= requestedCategory;
-                TempData["message"] = "Category name is not valid.";
+                
                 return RedirectToAction("Show", new { id = oldCategory.Id });
             }
         }
+
+        public  IActionResult New()
+        {
+            
+
+            if (TempData.ContainsKey("message"))
+            {
+                ViewBag.Message = TempData["message"];
+            }
+
+
+                return View();  
+        }
+
+        [HttpPost]
+        public IActionResult New(Category requestedCategory)
+        {
+            if (ModelState.IsValid)
+            {
+                db.Categories.Add(requestedCategory);
+                db.SaveChanges();
+
+                TempData["message"] = "Category named: " + requestedCategory.CategoryName + " has been successfully created.";
+
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View(requestedCategory);
+            }
+        }
+
 
         [HttpPost]
         public IActionResult Delete(int id) {
