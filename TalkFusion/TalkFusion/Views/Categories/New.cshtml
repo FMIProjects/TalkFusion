@@ -1,5 +1,43 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿
 @{
+    ViewBag.Title= "Add a new Category";
 }
+
+
+@model TalkFusion.Models.Category
+
+<div class="text-center">
+    <h1>@ViewBag.Title</h1>
+</div>
+
+
+<div class="card">
+    <div class="card-body">
+
+        @using (Html.BeginForm(actionName: "New",
+        controllerName: "Categories",
+        method: FormMethod.Post))
+        {
+
+            <div class="text-center">
+                <button style="width:50%;" class="btn btn-success" type="submit">Add new category</button>
+            </div>
+
+            <br />
+
+            
+
+            @Html.Label("CategoryName","Category Name")
+
+            <br />
+            @Html.TextBox("CategoryName",null,new {@class="form-control"})
+            <br />
+            <br />
+
+            
+        }
+
+    </div>
+</div>
+
+

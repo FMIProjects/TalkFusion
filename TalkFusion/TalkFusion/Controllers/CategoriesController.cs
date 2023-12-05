@@ -83,8 +83,7 @@ namespace TalkFusion.Controllers
         [HttpPost]
         public IActionResult New(Category requestedCategory)
         {
-            if (ModelState.IsValid)
-            {
+            try { 
                 db.Categories.Add(requestedCategory);
                 db.SaveChanges();
 
@@ -92,7 +91,7 @@ namespace TalkFusion.Controllers
 
                 return RedirectToAction("Index");
             }
-            else
+            catch (Exception e) 
             {
                 return View(requestedCategory);
             }
