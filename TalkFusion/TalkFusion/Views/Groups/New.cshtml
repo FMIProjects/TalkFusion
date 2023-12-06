@@ -10,25 +10,30 @@
 
     <div class="card-body">
 
-        @using(Html.BeginForm(actionName:"New",
-        controllerName:"Groups",
+        @using (Html.BeginForm(actionName: "New",
+        controllerName: "Groups",
         method: FormMethod.Post))
         {
             @Html.Label("Title","Group title")
             @Html.TextBox("Title",null,new {@class="form-control"})
-            <br /><br />
+
+            <br />
+            <br />
 
             @Html.Label("Description","Group description")
             @Html.TextArea("Description",null,new{@class="form-control"})
-            <br /><br />
+
+            <br />
+            <br />
 
             @Html.Label("Category","Choose group category")
             @Html.DropDownListFor(m=>m.CategoryId,
-                new SelectList(Model.allCategories, "Value", "Text"),
-                "Select Category",
-                new{@class="form-control"}
-            )
-            <br /><br />
+        new SelectList(Model.AllCategories, "Value", "Text"),
+        "Select Category",
+        new{@class="form-control"}
+        )
+            <br />
+            <br />
 
             <div class="text-center">
                 <button style="width:30%;" class="btn btn-success" type="submit">Create new group</button>
@@ -36,7 +41,7 @@
 
         }
 
-        
+
     </div>
 
 </div>

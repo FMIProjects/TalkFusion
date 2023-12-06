@@ -1,11 +1,8 @@
-﻿
+﻿@model TalkFusion.Models.Category
+
 @{
-    ViewBag.Title= "Add a new Category";
+    ViewBag.Title = "Add a new Category";
 }
-
-
-@model TalkFusion.Models.Category
-
 <div class="text-center">
     <h1>@ViewBag.Title</h1>
 </div>
@@ -18,11 +15,12 @@
         controllerName: "Categories",
         method: FormMethod.Post))
         {
-
-            @Html.Label("CategoryName","Category Name")
+            @Html.Label("CategoryName","Category Name:")
 
             <br />
+
             @Html.TextBox("CategoryName",null,new {@class="form-control"})
+
             <br />
             <br />
 
@@ -31,8 +29,6 @@
             </div>
 
             <br />
-
-            
         }
 
     </div>

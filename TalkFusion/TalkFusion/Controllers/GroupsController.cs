@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TalkFusion.Data;
 using TalkFusion.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
-using System.Security.Cryptography;
 
 namespace TalkFusion.Controllers
 {
@@ -15,7 +11,7 @@ namespace TalkFusion.Controllers
 
         public GroupsController(ApplicationDbContext context)
         {
-            this.db = context;
+            db = context;
         }
 
         public IActionResult Index()
@@ -28,7 +24,7 @@ namespace TalkFusion.Controllers
                 ViewBag.Message = TempData["message"];
             }
 
-            ViewBag.Groups= groups;
+            ViewBag.Groups = groups;
 
             return View();
         }
@@ -45,10 +41,11 @@ namespace TalkFusion.Controllers
             return View(group);
         }
 
-        public IActionResult Edit(int id) {
+        public IActionResult Edit(int id)
+        {
 
             var group = db.Groups.Find(id);
-            group.allCategories = getAllCategories();
+            group.AllCategories = getAllCategories();
 
             if (TempData.ContainsKey("message"))
             {
@@ -59,9 +56,9 @@ namespace TalkFusion.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(int id,Group requestedGroup)
+        public IActionResult Edit(int id, Group requestedGroup)
         {
-            Group group = db.Groups.Find(id);
+            var group = db.Groups.Find(id);
             try
             {
                 group.Title = requestedGroup.Title;
@@ -72,18 +69,19 @@ namespace TalkFusion.Controllers
                 TempData["message"] = "The group named: " + group.Title + " was successfully edited.";
 
                 return RedirectToAction("Index");
-            }catch (Exception ex)
+
+            }
+            catch (Exception e)
             {
                 return View(group);
             }
-            
+
         }
 
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            Group oldGroup=db.Groups.Find(id);
-            
+            var oldGroup = db.Groups.Find(id);
 
             TempData["message"] = "The group named: " + oldGroup.Title + " has been succesfully deleted";
 
@@ -96,9 +94,9 @@ namespace TalkFusion.Controllers
         public IActionResult New()
         {
 
-            Group dummyGroup= new Group();
+            var dummyGroup = new Group();
 
-            dummyGroup.allCategories=getAllCategories();
+            dummyGroup.AllCategories = getAllCategories();
 
             if (TempData.ContainsKey("message"))
             {
@@ -120,7 +118,8 @@ namespace TalkFusion.Controllers
 
                 return RedirectToAction("Index");
 
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return View(requestedGroup);
             }
@@ -129,13 +128,17 @@ namespace TalkFusion.Controllers
         [NonAction]
         public IEnumerable<SelectListItem> getAllCategories()
         {
-            var selectList=new List<SelectListItem>();
+            var selectList = new List<SelectListItem>();
 
             var categories = from categ in db.Categories select categ;
 
-            foreach (var category in categories) {
-                selectList.Add(new SelectListItem {
-                    Value=category.Id.ToString(), Text=category.CategoryName.ToString() });
+            foreach (var category in categories)
+            {
+                selectList.Add(new SelectListItem
+                {
+                    Value = category.Id.ToString(),
+                    Text = category.CategoryName.ToString()
+                });
             }
 
             return selectList;
