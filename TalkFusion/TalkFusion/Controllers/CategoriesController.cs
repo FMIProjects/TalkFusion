@@ -36,7 +36,7 @@ namespace TalkFusion.Controllers
 
         public IActionResult Show(int id)
         {
-            Category shownCategory = db.Categories.Find(id);
+            Category shownCategory = db.Categories.Include(c=>c.Groups).FirstOrDefault(c => c.Id == id);
 
             if (TempData.ContainsKey("message"))
             {
@@ -100,11 +100,11 @@ namespace TalkFusion.Controllers
 
         [HttpPost]
         public IActionResult Delete(int id) {
-            Category category = db.Categories.Find(id);
+            Category oldCategory = db.Categories.Find(id);
 
-            TempData["message"] = "The category named: " + category.CategoryName + " has been successfully deleted.";
+            TempData["message"] = "The category named: " + oldCategory.CategoryName + " has been successfully deleted.";
 
-            db.Categories.Remove(category);
+            db.Categories.Remove(oldCategory);
             db.SaveChanges();
             
             return RedirectToAction("Index");

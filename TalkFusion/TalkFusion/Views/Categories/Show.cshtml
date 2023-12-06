@@ -34,7 +34,7 @@
             routeValues: new { id = Model.Id }))
             {
                 
-                    @Html.Label("CategoryName","New category name")
+                    @Html.Label("CategoryName","Edit category name")
                     <br />
                     @Html.EditorFor(category=>category.CategoryName, new{htmlAttributes = new{ @class="form-control"}})
                 
@@ -55,13 +55,39 @@
         </div>
     </div>
 
-    @if(Model.Groups != null)
-    {
-        @foreach(var group in Model.Groups)
-        {
-        
-        }
-    }
     
 
 </div>
+
+<br />
+<br />
+
+<!-- show groups with this category label-->
+<h2>Groups that are part of this category</h2>
+
+<br />
+<br />
+
+@if (Model.Groups != null)
+{
+    @foreach (var group in Model.Groups)
+    {
+
+        <div class="card">
+            <div class="card-body">
+
+                <h2>@group.Title</h2>
+                <br>
+
+                <p>@group.Description</p>
+                <br>
+
+
+            </div>
+        </div>
+        <br />
+        <br />
+        
+
+    }
+}
