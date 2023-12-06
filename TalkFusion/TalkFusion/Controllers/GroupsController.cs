@@ -48,6 +48,7 @@ namespace TalkFusion.Controllers
         public IActionResult Edit(int id) {
 
             var group = db.Groups.Find(id);
+            group.allCategories = getAllCategories();
 
             if (TempData.ContainsKey("message"))
             {
@@ -55,6 +56,27 @@ namespace TalkFusion.Controllers
             }
 
             return View(group);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id,Group requestedGroup)
+        {
+            Group group = db.Groups.Find(id);
+            try
+            {
+                group.Title = requestedGroup.Title;
+                group.Description = requestedGroup.Description;
+                group.CategoryId = requestedGroup.CategoryId;
+                db.SaveChanges();
+
+                TempData["message"] = "The group named: " + group.Title + " was successfully edited.";
+
+                return RedirectToAction("Index");
+            }catch (Exception ex)
+            {
+                return View(group);
+            }
+            
         }
 
         [HttpPost]
