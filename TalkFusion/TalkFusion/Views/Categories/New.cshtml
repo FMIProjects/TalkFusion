@@ -7,6 +7,9 @@
     <h1>@ViewBag.Title</h1>
 </div>
 
+<br />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<br />
 
 <div class="card">
     <div class="card-body">
@@ -20,7 +23,7 @@
             <br />
 
             @Html.TextBox("CategoryName",null,new {@class="form-control"})
-
+            @Html.ValidationMessage("CategoryName", null, new { @class = "text-danger" })
             <br />
             <br />
 

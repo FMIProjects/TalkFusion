@@ -30,7 +30,7 @@ namespace TalkFusion.Controllers
             return View();
         }
 
-        public IActionResult Show(int id)
+        public IActionResult Show(int? id)
         {
             var shownCategory = (from category in db.Categories
                                  where category.Id == id
@@ -46,42 +46,45 @@ namespace TalkFusion.Controllers
             return View(shownCategory);
         }
 
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = db.Categories.Find(id);
+            return View(category);
+        }
+
         [HttpPost]
         public IActionResult Edit(int id, Category requestedCategory)
         {
-            Category? oldCategory = db.Categories.Find(id);
-
-            try
+            if (ModelState.IsValid)
             {
-                oldCategory.CategoryName = requestedCategory.CategoryName;
-                db.SaveChanges();
+                Category? oldCategory = db.Categories.Find(id);
 
-                TempData["message"] = "The category named: " + oldCategory.CategoryName + " was successfully edited.";
+                if (oldCategory != null && requestedCategory != null)
+                {
+                    oldCategory.CategoryName = requestedCategory.CategoryName;
+                    db.SaveChanges();
+                    TempData["message"] = "The category named: " + oldCategory.CategoryName + " was successfully edited.";
+                }
+
                 return RedirectToAction("Index");
             }
-            catch (Exception e)
+            else
             {
-                ViewBag.Category = requestedCategory;
-
-                return RedirectToAction("Show", new { id = oldCategory.Id });
+                return View(requestedCategory);
             }
         }
 
+        [HttpGet]
         public IActionResult New()
         {
-
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.Message = TempData["message"];
-            }
-
             return View();
         }
 
         [HttpPost]
         public IActionResult New(Category requestedCategory)
         {
-            try
+            if (ModelState.IsValid)
             {
                 db.Categories.Add(requestedCategory);
                 db.SaveChanges();
@@ -90,7 +93,7 @@ namespace TalkFusion.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch (Exception e)
+            else
             {
                 return View(requestedCategory);
             }
@@ -102,10 +105,12 @@ namespace TalkFusion.Controllers
         {
             Category? oldCategory = db.Categories.Find(id);
 
-            TempData["message"] = "The category named: " + oldCategory.CategoryName + " has been successfully deleted.";
-
-            db.Categories.Remove(oldCategory);
-            db.SaveChanges();
+            if (oldCategory != null)
+            {
+                TempData["message"] = "The category named: " + oldCategory.CategoryName + " has been successfully deleted.";
+                db.Categories.Remove(oldCategory);
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Index");
         }
