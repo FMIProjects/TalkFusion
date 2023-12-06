@@ -55,15 +55,38 @@
         </div>
     </div>
 
-    @if(Model.Groups != null)
-    {
-        @foreach(var group in Model.Groups)
-        {
-
-            <p>1</p>
-
-        }
-    }
     
 
 </div>
+
+<br />
+<br />
+
+<h2>Groups that are part of this category</h2>
+
+<br />
+<br />
+
+@if (Model.Groups != null)
+{
+    @foreach (var group in Model.Groups)
+    {
+
+        <div class="card">
+            <div class="card-body">
+
+                <h2>@group.Title</h2>
+                <br>
+
+                <p>@group.Description</p>
+                <br>
+
+
+            </div>
+        </div>
+        <br />
+        <br />
+        
+
+    }
+}

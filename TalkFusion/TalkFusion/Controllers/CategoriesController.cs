@@ -36,7 +36,7 @@ namespace TalkFusion.Controllers
 
         public IActionResult Show(int id)
         {
-            Category shownCategory = db.Categories.Find(id);
+            Category shownCategory = db.Categories.Include(c=>c.Groups).FirstOrDefault(c => c.Id == id);
 
             if (TempData.ContainsKey("message"))
             {
