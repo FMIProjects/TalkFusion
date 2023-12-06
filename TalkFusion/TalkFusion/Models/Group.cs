@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TalkFusion.Models
 {
@@ -24,6 +26,11 @@ namespace TalkFusion.Models
 
 
         public virtual ICollection<Channel> Channels { get; set; }
+
+
+        //used in New() or Edit()
+        [NotMapped]
+        public IEnumerable<SelectListItem> allCategories { get; set; }  
 
     }
 }

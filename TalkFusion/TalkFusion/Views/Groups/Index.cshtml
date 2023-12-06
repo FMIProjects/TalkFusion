@@ -33,7 +33,14 @@
 
                 <a href="/Groups/Edit/@group.Id"  class="btn btn-success">Edit group</a>
                 <a href="/Groups/Show/@group.Id" class="btn btn-success">See group</a>
-                <a href="/Groups/Delete/@group.Id" class="btn btn-danger">Delete group</a>
+
+                @using (Html.BeginForm(actionName: "Delete",
+                controllerName: "Groups",
+                method: FormMethod.Post,
+                routeValues: new { id = group.Id }))
+                {
+                    <button class="btn btn-danger" type="submit">Delete Category</button>
+                }
 
             </div>
 
