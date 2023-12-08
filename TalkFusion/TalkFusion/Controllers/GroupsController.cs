@@ -32,22 +32,63 @@ namespace TalkFusion.Controllers
 
         public IActionResult Show(int id)
         {
-            var group = db.Groups.Find(id);
+            var group = (from grp in db.Groups.Include("Category").Include("Channels")
+                         where grp.Id == id
+                         select grp).First();
+            group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
+            return View(group);
+        }
 
-            if (TempData.ContainsKey("message"))
+        // Show  - After Selecting a Channel / After New Channel 
+        [HttpPost]
+        public IActionResult Show([FromForm] int? channelId, [FromForm] Channel? channel)
+        {
+            // After Selecting a Channel
+            if (channelId != null)
             {
-                ViewBag.Message = TempData["message"];
+                var currentChannel = (from chn in db.Channels.Include("Comments")
+                                      where chn.Id == channelId
+                                      select chn).First();
+
+                var group = db.Groups.Include("Category").Include("Channels")
+                .Where(group => group.Id == currentChannel.GroupId)
+                .First();
+                group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
+
+                ViewBag.Channel = currentChannel;
+
+                ModelState.Clear();
+
+                return View(group);
             }
 
-            return View(group);
+            // After Creating a Channel
+            if (channel != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Channels.Add(channel);
+                    db.SaveChanges();
+                    return Redirect("/Groups/Show/" + channel.GroupId);
+                }
+                else
+                {
+                    var group = db.Groups.Include("Category").Include("Channels")
+                    .Where(group => group.Id == channel.GroupId)
+                    .First();
+                    group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
+                    return View(group);
+                }
+            }
+            return View();
         }
 
         public IActionResult Edit(int id)
         {
 
             var group = (from art in db.Groups.Include("Category")
-                               where art.Id == id
-                               select art).First();
+                         where art.Id == id
+                         select art).First();
 
             group.AllCategories = GetAllCategories();
 
@@ -58,7 +99,8 @@ namespace TalkFusion.Controllers
         public IActionResult Edit(int id, Group requestedGroup)
         {
             var group = db.Groups.Find(id);
-            group.AllCategories = GetAllCategories();
+            if (group != null)
+                group.AllCategories = GetAllCategories();
 
             if (ModelState.IsValid)
             {
