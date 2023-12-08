@@ -2,6 +2,7 @@
 using TalkFusion.Data;
 using TalkFusion.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace TalkFusion.Controllers
 {
@@ -44,13 +45,11 @@ namespace TalkFusion.Controllers
         public IActionResult Edit(int id)
         {
 
-            var group = db.Groups.Find(id);
-            group.AllCategories = getAllCategories();
+            var group = (from art in db.Groups.Include("Category")
+                               where art.Id == id
+                               select art).First();
 
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.Message = TempData["message"];
-            }
+            group.AllCategories = GetAllCategories();
 
             return View(group);
         }
@@ -59,19 +58,24 @@ namespace TalkFusion.Controllers
         public IActionResult Edit(int id, Group requestedGroup)
         {
             var group = db.Groups.Find(id);
-            try
-            {
-                group.Title = requestedGroup.Title;
-                group.Description = requestedGroup.Description;
-                group.CategoryId = requestedGroup.CategoryId;
-                db.SaveChanges();
+            group.AllCategories = GetAllCategories();
 
-                TempData["message"] = "The group named: " + group.Title + " was successfully edited.";
+            if (ModelState.IsValid)
+            {
+                if (group != null)
+                {
+                    group.Title = requestedGroup.Title;
+                    group.Description = requestedGroup.Description;
+                    group.CategoryId = requestedGroup.CategoryId;
+                    db.SaveChanges();
+
+                    TempData["message"] = "The group named: " + group.Title + " was successfully edited.";
+                }
 
                 return RedirectToAction("Index");
 
             }
-            catch (Exception e)
+            else
             {
                 return View(group);
             }
@@ -83,10 +87,13 @@ namespace TalkFusion.Controllers
         {
             var oldGroup = db.Groups.Find(id);
 
-            TempData["message"] = "The group named: " + oldGroup.Title + " has been succesfully deleted";
+            if (oldGroup != null)
+            {
+                TempData["message"] = "The group named: " + oldGroup.Title + " has been succesfully deleted";
 
-            db.Groups.Remove(oldGroup);
-            db.SaveChanges();
+                db.Groups.Remove(oldGroup);
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Index");
         }
@@ -94,14 +101,10 @@ namespace TalkFusion.Controllers
         public IActionResult New()
         {
 
-            var dummyGroup = new Group();
-
-            dummyGroup.AllCategories = getAllCategories();
-
-            if (TempData.ContainsKey("message"))
+            var dummyGroup = new Group
             {
-                ViewBag.Message = TempData["message"];
-            }
+                AllCategories = GetAllCategories()
+            };
 
             return View(dummyGroup);
         }
@@ -109,8 +112,10 @@ namespace TalkFusion.Controllers
         [HttpPost]
         public IActionResult New(Group requestedGroup)
         {
-            try
+            requestedGroup.AllCategories = GetAllCategories();
+            if (ModelState.IsValid)
             {
+                requestedGroup.UserId = 0;
                 db.Groups.Add(requestedGroup);
                 db.SaveChanges();
 
@@ -119,14 +124,14 @@ namespace TalkFusion.Controllers
                 return RedirectToAction("Index");
 
             }
-            catch (Exception ex)
+            else
             {
                 return View(requestedGroup);
             }
         }
 
         [NonAction]
-        public IEnumerable<SelectListItem> getAllCategories()
+        public IEnumerable<SelectListItem> GetAllCategories()
         {
             var selectList = new List<SelectListItem>();
 
@@ -134,11 +139,15 @@ namespace TalkFusion.Controllers
 
             foreach (var category in categories)
             {
-                selectList.Add(new SelectListItem
+                if (category != null && category.CategoryName != null)
                 {
-                    Value = category.Id.ToString(),
-                    Text = category.CategoryName.ToString()
-                });
+                    selectList.Add(new SelectListItem
+                    {
+                        Value = category.Id.ToString(),
+                        Text = category.CategoryName.ToString()
+                    });
+                }
+
             }
 
             return selectList;

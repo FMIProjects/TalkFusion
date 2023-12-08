@@ -6,6 +6,10 @@
 
 <h1 class="text-center">@ViewBag.pageTitle</h1>
 
+<br />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<br />
+
 <div class="card">
 
     <div class="card-body">
@@ -16,22 +20,28 @@
         {
             @Html.Label("Title","Group title")
             @Html.TextBox("Title",null,new {@class="form-control"})
+            @Html.ValidationMessage("Title", null, new { @class = "text-danger" })
+
 
             <br />
             <br />
 
             @Html.Label("Description","Group description")
             @Html.TextArea("Description",null,new{@class="form-control"})
+            @Html.ValidationMessage("Description", null, new { @class = "text-danger" })
+
 
             <br />
             <br />
 
             @Html.Label("Category","Choose group category")
             @Html.DropDownListFor(m=>m.CategoryId,
-        new SelectList(Model.AllCategories, "Value", "Text"),
-        "Select Category",
-        new{@class="form-control"}
-        )
+            new SelectList(Model.AllCategories, "Value", "Text"),
+            "Select Category",
+            new{@class="form-control"}
+            )
+            @Html.ValidationMessageFor(m => m.CategoryId, null, new { @class = "text-danger" })
+
             <br />
             <br />
 

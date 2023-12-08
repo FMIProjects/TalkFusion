@@ -15,7 +15,7 @@ namespace TalkFusion.Models
         [Required(ErrorMessage = "Group description is mandatory")]
         public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Group user is mandatory")]
+        //[Required(ErrorMessage = "Group user is mandatory")]
         public int? UserId { get; set; }
 
         [Required(ErrorMessage = "Group category is mandatory")]
