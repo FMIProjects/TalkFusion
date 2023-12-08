@@ -8,18 +8,16 @@ namespace TalkFusion.Models
         public int Id { get; set; }
 
         [Required(ErrorMessage = "Channel title is mandatory")]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         [Required(ErrorMessage = "Channel description is mandatory")]
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        [Required(ErrorMessage = "Channel group is mandatory")]
-        public int GroupId { get; set; }
+        public int? GroupId { get; set; }
 
-        public virtual Group group { get; set; }
+        public virtual Group? Group { get; set; }
 
-        virtual public ICollection<Comment> Comments { get; set; }
-
+        virtual public ICollection<Comment>? Comments { get; set; }
 
     }
 }

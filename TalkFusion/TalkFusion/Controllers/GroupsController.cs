@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TalkFusion.Data;
 using TalkFusion.Models;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
-using System.Security.Cryptography;
 
 namespace TalkFusion.Controllers
 {
@@ -15,7 +12,7 @@ namespace TalkFusion.Controllers
 
         public GroupsController(ApplicationDbContext context)
         {
-            this.db = context;
+            db = context;
         }
 
         public IActionResult Index()
@@ -28,67 +25,117 @@ namespace TalkFusion.Controllers
                 ViewBag.Message = TempData["message"];
             }
 
-            ViewBag.Groups= groups;
+            ViewBag.Groups = groups;
 
             return View();
         }
 
         public IActionResult Show(int id)
         {
-            var group = db.Groups.Find(id);
-
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.Message = TempData["message"];
-            }
-
+            var group = (from grp in db.Groups.Include("Category").Include("Channels")
+                         where grp.Id == id
+                         select grp).First();
+            group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
             return View(group);
         }
 
-        public IActionResult Edit(int id) {
-
-            var group = db.Groups.Find(id);
-            group.allCategories = getAllCategories();
-
-            if (TempData.ContainsKey("message"))
+        // Show  - After Selecting a Channel / After New Channel 
+        [HttpPost]
+        public IActionResult Show([FromForm] int? channelId, [FromForm] Channel? channel)
+        {
+            // After Selecting a Channel
+            if (channelId != null)
             {
-                ViewBag.Message = TempData["message"];
+                var currentChannel = (from chn in db.Channels.Include("Comments")
+                                      where chn.Id == channelId
+                                      select chn).First();
+
+                var group = db.Groups.Include("Category").Include("Channels")
+                .Where(group => group.Id == currentChannel.GroupId)
+                .First();
+                group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
+
+                ViewBag.Channel = currentChannel;
+
+                ModelState.Clear();
+
+                return View(group);
             }
+
+            // After Creating a Channel
+            if (channel != null)
+            {
+                if (ModelState.IsValid)
+                {
+                    db.Channels.Add(channel);
+                    db.SaveChanges();
+                    return Redirect("/Groups/Show/" + channel.GroupId);
+                }
+                else
+                {
+                    var group = db.Groups.Include("Category").Include("Channels")
+                    .Where(group => group.Id == channel.GroupId)
+                    .First();
+                    group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
+                    return View(group);
+                }
+            }
+            return View();
+        }
+
+        public IActionResult Edit(int id)
+        {
+
+            var group = (from art in db.Groups.Include("Category")
+                         where art.Id == id
+                         select art).First();
+
+            group.AllCategories = GetAllCategories();
 
             return View(group);
         }
 
         [HttpPost]
-        public IActionResult Edit(int id,Group requestedGroup)
+        public IActionResult Edit(int id, Group requestedGroup)
         {
-            Group group = db.Groups.Find(id);
-            try
-            {
-                group.Title = requestedGroup.Title;
-                group.Description = requestedGroup.Description;
-                group.CategoryId = requestedGroup.CategoryId;
-                db.SaveChanges();
+            var group = db.Groups.Find(id);
+            if (group != null)
+                group.AllCategories = GetAllCategories();
 
-                TempData["message"] = "The group named: " + group.Title + " was successfully edited.";
+            if (ModelState.IsValid)
+            {
+                if (group != null)
+                {
+                    group.Title = requestedGroup.Title;
+                    group.Description = requestedGroup.Description;
+                    group.CategoryId = requestedGroup.CategoryId;
+                    db.SaveChanges();
+
+                    TempData["message"] = "The group named: " + group.Title + " was successfully edited.";
+                }
 
                 return RedirectToAction("Index");
-            }catch (Exception ex)
+
+            }
+            else
             {
                 return View(group);
             }
-            
+
         }
 
         [HttpPost]
         public IActionResult Delete(int id)
         {
-            Group oldGroup=db.Groups.Find(id);
-            
+            var oldGroup = db.Groups.Find(id);
 
-            TempData["message"] = "The group named: " + oldGroup.Title + " has been succesfully deleted";
+            if (oldGroup != null)
+            {
+                TempData["message"] = "The group named: " + oldGroup.Title + " has been succesfully deleted";
 
-            db.Groups.Remove(oldGroup);
-            db.SaveChanges();
+                db.Groups.Remove(oldGroup);
+                db.SaveChanges();
+            }
 
             return RedirectToAction("Index");
         }
@@ -96,14 +143,10 @@ namespace TalkFusion.Controllers
         public IActionResult New()
         {
 
-            Group dummyGroup= new Group();
-
-            dummyGroup.allCategories=getAllCategories();
-
-            if (TempData.ContainsKey("message"))
+            var dummyGroup = new Group
             {
-                ViewBag.Message = TempData["message"];
-            }
+                AllCategories = GetAllCategories()
+            };
 
             return View(dummyGroup);
         }
@@ -111,8 +154,10 @@ namespace TalkFusion.Controllers
         [HttpPost]
         public IActionResult New(Group requestedGroup)
         {
-            try
+            requestedGroup.AllCategories = GetAllCategories();
+            if (ModelState.IsValid)
             {
+                requestedGroup.UserId = 0;
                 db.Groups.Add(requestedGroup);
                 db.SaveChanges();
 
@@ -120,22 +165,31 @@ namespace TalkFusion.Controllers
 
                 return RedirectToAction("Index");
 
-            } catch (Exception ex)
+            }
+            else
             {
                 return View(requestedGroup);
             }
         }
 
         [NonAction]
-        public IEnumerable<SelectListItem> getAllCategories()
+        public IEnumerable<SelectListItem> GetAllCategories()
         {
-            var selectList=new List<SelectListItem>();
+            var selectList = new List<SelectListItem>();
 
             var categories = from categ in db.Categories select categ;
 
-            foreach (var category in categories) {
-                selectList.Add(new SelectListItem {
-                    Value=category.Id.ToString(), Text=category.CategoryName.ToString() });
+            foreach (var category in categories)
+            {
+                if (category != null && category.CategoryName != null)
+                {
+                    selectList.Add(new SelectListItem
+                    {
+                        Value = category.Id.ToString(),
+                        Text = category.CategoryName.ToString()
+                    });
+                }
+
             }
 
             return selectList;

@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewBag.pageTitle = "Group list";
 }
 
@@ -18,9 +17,9 @@
 }
 
 <br />
-@foreach(var group in ViewBag.Groups)
+@foreach (var group in ViewBag.Groups)
 {
-    <div class="card" >
+    <div class="card">
         <div class="card-body">
 
             <h2>@group.Title</h2>
@@ -31,13 +30,13 @@
 
             <div class="d-flex justify-content-between justify-content-end">
 
-                <a href="/Groups/Edit/@group.Id"  class="btn btn-success">Edit group</a>
+                <a href="/Groups/Edit/@group.Id" class="btn btn-success">Edit group</a>
                 <a href="/Groups/Show/@group.Id" class="btn btn-success">See group</a>
 
                 @using (Html.BeginForm(actionName: "Delete",
-                controllerName: "Groups",
-                method: FormMethod.Post,
-                routeValues: new { id = group.Id }))
+               controllerName: "Groups",
+               method: FormMethod.Post,
+               routeValues: new { id = group.Id }))
                 {
                     <button class="btn btn-danger" type="submit">Delete Category</button>
                 }

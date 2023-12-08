@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TalkFusion.Data;
 using TalkFusion.Models;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 
 namespace TalkFusion.Controllers
 {
@@ -13,9 +10,9 @@ namespace TalkFusion.Controllers
 
         private readonly ApplicationDbContext db;
 
-        public CategoriesController (ApplicationDbContext context)
+        public CategoriesController(ApplicationDbContext context)
         {
-            this.db = context;
+            db = context;
         }
 
         public IActionResult Index()
@@ -33,10 +30,13 @@ namespace TalkFusion.Controllers
             return View();
         }
 
-
-        public IActionResult Show(int id)
+        public IActionResult Show(int? id)
         {
-            Category shownCategory = db.Categories.Include(c=>c.Groups).FirstOrDefault(c => c.Id == id);
+            var shownCategory = (from category in db.Categories
+                                 where category.Id == id
+                                 select category)
+                                .Include(c => c.Groups)
+                                .FirstOrDefault();
 
             if (TempData.ContainsKey("message"))
             {
@@ -46,44 +46,46 @@ namespace TalkFusion.Controllers
             return View(shownCategory);
         }
 
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = db.Categories.Find(id);
+            return View(category);
+        }
+
         [HttpPost]
         public IActionResult Edit(int id, Category requestedCategory)
         {
-            Category oldCategory= db.Categories.Find(id);
-
-            try
+            if (ModelState.IsValid)
             {
-                oldCategory.CategoryName=requestedCategory.CategoryName;
-                db.SaveChanges();
+                Category? oldCategory = db.Categories.Find(id);
 
-                TempData["message"] = "The category named: " + oldCategory.CategoryName + " was successfully edited.";
+                if (oldCategory != null && requestedCategory != null)
+                {
+                    oldCategory.CategoryName = requestedCategory.CategoryName;
+                    db.SaveChanges();
+                    TempData["message"] = "The category named: " + oldCategory.CategoryName + " was successfully edited.";
+                }
+
                 return RedirectToAction("Index");
             }
-            catch(Exception e)
+            else
             {
-                ViewBag.Category= requestedCategory;
-                
-                return RedirectToAction("Show", new { id = oldCategory.Id });
+                return View(requestedCategory);
             }
         }
 
-        public  IActionResult New()
+        [HttpGet]
+        public IActionResult New()
         {
-            
-
-            if (TempData.ContainsKey("message"))
-            {
-                ViewBag.Message = TempData["message"];
-            }
-
-
-                return View();  
+            return View();
         }
 
         [HttpPost]
         public IActionResult New(Category requestedCategory)
         {
-            try { 
+            if (ModelState.IsValid)
+            {
                 db.Categories.Add(requestedCategory);
                 db.SaveChanges();
 
@@ -91,7 +93,7 @@ namespace TalkFusion.Controllers
 
                 return RedirectToAction("Index");
             }
-            catch (Exception e) 
+            else
             {
                 return View(requestedCategory);
             }
@@ -99,14 +101,17 @@ namespace TalkFusion.Controllers
 
 
         [HttpPost]
-        public IActionResult Delete(int id) {
-            Category oldCategory = db.Categories.Find(id);
+        public IActionResult Delete(int id)
+        {
+            Category? oldCategory = db.Categories.Find(id);
 
-            TempData["message"] = "The category named: " + oldCategory.CategoryName + " has been successfully deleted.";
+            if (oldCategory != null)
+            {
+                TempData["message"] = "The category named: " + oldCategory.CategoryName + " has been successfully deleted.";
+                db.Categories.Remove(oldCategory);
+                db.SaveChanges();
+            }
 
-            db.Categories.Remove(oldCategory);
-            db.SaveChanges();
-            
             return RedirectToAction("Index");
         }
     }

@@ -1,4 +1,89 @@
-﻿
-@{
-    
+﻿@{
+    ViewBag.PageName = "Show";
 }
+
+@model TalkFusion.Models.Group
+
+<div class="container-fluid">
+    <div class="row border-bottom pb-1" style="height:15vh; overflow:hidden">
+        <div class="col-md-3">
+
+            <!-- Group Info-->
+            <h3>@Model.Title</h3>
+            <h4>@Model.Category.CategoryName</h4>
+
+        </div>
+        <div class="col-md-9">
+
+            <!-- Channel Info-->
+            @if (ViewBag.Channel != null)
+            {
+                <h3>@ViewBag.Channel.Title</h3>
+                <h4>@ViewBag.Channel.Description</h4>
+            }
+
+        </div>
+    </div>
+    <div class="row" style="height:85vh">
+        <div class="col-md-3" style="overflow-y: auto; max-height: 85vh;">
+
+            <button id="toggleButton" onclick="toggleForm()">+</button>
+            <br />
+            <br />
+            <!-- Form New Channel -->
+            <form method="post" action="/Groups/Show" id="toggle" style="display:none;">
+
+                <div class="card-body">
+
+                    <input type="hidden" name="GroupId" value="@Model.Id" />
+
+                    <label>Channel Name:</label>
+                    <br />
+                    <textarea class="form-control" name="Title"></textarea>
+                    @Html.ValidationMessage("Title", null, new { @class = "text-danger"})
+                    <br />
+
+                    <label>Channel Description:</label>
+                    <br />
+                    <textarea class="form-control" name="Description"></textarea>
+                    @Html.ValidationMessage("Description", null, new { @class = "text-danger"})
+                    <br />
+                    <button class="btn btn-dark " type="submit">Add Channel</button>
+                </div>
+            </form>
+
+            <!--Channel List-->
+            @foreach (var channel in Model.Channels)
+            {
+                <div class="d-flex align-items-center mb-2">
+
+                    <!--See Channel-->
+                    <div class="mr-auto p-2">
+                        <form method="post" action="/Groups/Show" class="text-center">
+                            <button class="btn btn-dark" name="channelId" value="@channel.Id" type="submit">@channel.Title</button>
+                        </form>
+                    </div>
+
+                    <!--Edit Channel-->
+                    <div class="p-2">
+                        <a href="/Channels/Edit/@channel.Id" type="button" class="btn btn-dark"><i class="bi bi-pencil-square"></i></a>
+                    </div>
+
+                    <!--Delete Channel-->
+                    <form method="post" action="/Channels/Delete/@channel.Id" class="p-2">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </form>
+                </div>
+            }
+
+        </div>
+        <div class="col-md-9">
+            <!-- Channel Comments -->
+            <p>One</p>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/toggleform.js"></script>
