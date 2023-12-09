@@ -3,6 +3,7 @@ using TalkFusion.Data;
 using TalkFusion.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Channels;
 
 namespace TalkFusion.Controllers
 {
@@ -30,38 +31,27 @@ namespace TalkFusion.Controllers
             return View();
         }
 
-        public IActionResult Show(int id)
+        public IActionResult Show(int id,int? channelId)
         {
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id
                          select grp).First();
             group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
-            return View(group);
-        }
 
-        // Show  - After Selecting a Channel / After New Channel 
-        [HttpPost]
-        public IActionResult Show([FromForm] int? channelId, [FromForm] Channel? channel)
-        {
-            // After Selecting a Channel
             if (channelId != null)
             {
                 var currentChannel = (from chn in db.Channels.Include("Comments")
                                       where chn.Id == channelId
                                       select chn).First();
-
-                var group = db.Groups.Include("Category").Include("Channels")
-                .Where(group => group.Id == currentChannel.GroupId)
-                .First();
-                group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
-
                 ViewBag.Channel = currentChannel;
-
-                ModelState.Clear();
-
-                return View(group);
             }
+            return View(group);
+        }
 
+        // Show  - After New Channel 
+        [HttpPost]
+        public IActionResult Show([FromForm] Models.Channel? channel)
+        {
             // After Creating a Channel
             if (channel != null)
             {
@@ -81,6 +71,29 @@ namespace TalkFusion.Controllers
                 }
             }
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddComment([FromForm] Comment comment)
+        {
+            if (comment != null)
+            {
+                comment.Date = DateTime.Now;
+                if (ModelState.IsValid)
+                {
+                    db.Comments.Add(comment);
+                    db.SaveChanges();
+                    ViewBag.Channel = comment.Channel;
+                }
+                else
+                {
+
+                }
+            }
+            var currentChannel = (from chn in db.Channels.Include("Comments")
+                                  where chn.Id == comment.ChannelId
+                                  select chn).First();
+            return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
         }
 
         public IActionResult Edit(int id)

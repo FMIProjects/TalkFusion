@@ -44,3 +44,33 @@ a.nav-link {
     }
 
 /* pana aici vine partea de nav*/
+
+/*Group show classes*/
+
+.container-show-group {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    grid-template-rows: 15% 70% 15%;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        "Group Channel"
+        "Channels Comments"
+        "Channels Comments";
+}
+
+.Channels {
+    grid-area: Channels;
+}
+
+.Group {
+    grid-area: Group;
+}
+
+.Channel {
+    grid-area: Channel;
+}
+
+.Comments {
+    grid-area: Comments;
+}
