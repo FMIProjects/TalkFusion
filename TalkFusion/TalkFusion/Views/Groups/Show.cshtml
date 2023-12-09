@@ -5,6 +5,7 @@
 @model TalkFusion.Models.Group
 
 <div class="container-show-group">
+
     <div class="Group">
         <!-- Group Info-->
         <h3>@Model.Title</h3>
@@ -18,6 +19,10 @@
         {
             <h3>@ViewBag.Channel.Title</h3>
             <h4>@ViewBag.Channel.Description</h4>
+        }
+        else
+        {
+            <h3>Choose a Channel</h3>
         }
     </div>
 
@@ -56,7 +61,7 @@
 
                 <!--See Channel-->
                 <div class="mr-auto p-2">
-                    <a class="btn btn-primary btn-lg active" href="/Groups/Show/@Model.Id/@channel.Id">@channel.Title</a>
+                    <a class="btn btn-dark btn-lg active" href="/Groups/Show/@Model.Id/@channel.Id">@channel.Title</a>
                 </div>
 
                 <!--Edit Channel-->
@@ -77,10 +82,30 @@
     <div class="Comments" style=" overflow-y: auto; max-height: 85vh;">
         @if (ViewBag.Channel != null)
         {
+            <!--See Comment-->
             @foreach (var comment in ViewBag.Channel.Comments)
             {
-                <p>@comment.Text</p>
-                <p>@comment.Date</p>
+                <div class="card" style="width: 50%;margin-left: auto;">
+                    <div class="card-body">
+                        <p class="card-title">@comment.Text</p>
+
+                        <!--Edit Comment-->
+
+                        <div class="p-2">
+                            <a href="/Comments/Edit/@comment.Id" type="button" class="btn btn-dark"><i class="bi bi-pencil-square"></i></a>
+                        </div>
+
+                        <!--Delete Comment-->
+
+                        <form method="post" action="/Comments/Delete/@comment.Id" class="p-2">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                            <p>@comment.Date</p>
+                        </form>
+
+                    </div>
+                </div>
             }
 
             <form method="post" asp-controller="Groups" asp-action="AddComment" class="mt-4">

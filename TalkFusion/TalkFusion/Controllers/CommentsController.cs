@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using TalkFusion.Data;
 using TalkFusion.Models;
 
@@ -20,8 +21,10 @@ namespace TalkFusion.Controllers
             {
                 db.Comments.Remove(comment);
                 db.SaveChanges();
-
-                return Redirect("/Groups/Show/" + comment.Channel.GroupId);
+                var currentChannel = (from chn in db.Channels.Include("Comments")
+                                      where chn.Id == comment.ChannelId
+                                      select chn).First();
+                return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
             }
             return Redirect("/Groups/Index/");
         }
@@ -43,8 +46,10 @@ namespace TalkFusion.Controllers
                 {
                     comment.Text = requestedComment.Text;
                     db.SaveChanges();
-                    return Redirect("/Groups/Show/" + comment.Channel.GroupId);
-
+                    var currentChannel = (from chn in db.Channels.Include("Comments")
+                                          where chn.Id == comment.ChannelId
+                                          select chn).First();
+                    return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
                 }
                 return Redirect("/Groups/Index/");
             }

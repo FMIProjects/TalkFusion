@@ -1,25 +1,25 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
 
 /*
-    parte de css adaugata pentru a baga in navbar butoane catre paginile principale, gen categorie
-*/ 
+Navbar Classes
+*/
 
 .navbar {
     background-color: #dfe6e9 !important;
@@ -42,8 +42,6 @@ a.nav-link {
     .logoutbtn:hover {
         color: #00b894 !important;
     }
-
-/* pana aici vine partea de nav*/
 
 /*Group show classes*/
 
