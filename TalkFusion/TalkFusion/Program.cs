@@ -37,6 +37,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "GroupShow",
+    pattern: "Groups/Show/{id}/{channelId?}",
+    defaults: new { controller = "Groups", action = "Show" }
+);
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();

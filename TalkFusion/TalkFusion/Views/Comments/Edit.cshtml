@@ -1,0 +1,36 @@
+﻿@{
+    ViewBag.pageTitle = "Edit a comment";
+}
+
+@model TalkFusion.Models.Comment
+
+<h1 class="text-center">@ViewBag.pageTitle</h1>
+
+<br />
+@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+<br />
+
+<div class="card">
+
+    <div class="card-body">
+
+        @using (Html.BeginForm(actionName: "Edit",
+        controllerName: "Comments",
+        method: FormMethod.Post,
+        routeValues: new { id = Model.Id }))
+        {
+            @Html.Label("Text","Comment text")
+            @Html.EditorFor(comment=>comment.Text, new{htmlAttributes = new{ @class="form-control"}})
+            @Html.ValidationMessage("Text", null, new { @class = "text-danger" })
+
+            <br />
+            <br />
+
+            <div class="text-center">
+                <button style="width:30%;" class="btn btn-success" type="submit">Edit comment</button>
+            </div>
+
+        }
+
+    </div>
+</div>
