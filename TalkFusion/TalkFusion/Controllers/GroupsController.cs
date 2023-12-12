@@ -170,7 +170,7 @@ namespace TalkFusion.Controllers
             requestedGroup.AllCategories = GetAllCategories();
             if (ModelState.IsValid)
             {
-                requestedGroup.UserId = 0;
+              
                 db.Groups.Add(requestedGroup);
                 db.SaveChanges();
 
