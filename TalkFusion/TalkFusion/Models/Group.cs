@@ -22,6 +22,9 @@ namespace TalkFusion.Models
 
         public virtual ICollection<Channel>? Channels { get; set; }
 
+        //users that are part of this group
+        public virtual ICollection<UserGroup>? UserGroups { get; set; }
+
         //used in New() or Edit()
         [NotMapped]
         public IEnumerable<SelectListItem>? AllCategories { get; set; }

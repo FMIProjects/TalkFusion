@@ -15,5 +15,9 @@ namespace TalkFusion.Models
         public int? ChannelId { get; set; }
 
         public virtual Channel? Channel { get; set; }
+
+        //user id
+        public string? UserId { get; set; }
+        public virtual ApplicationUser? User { get; set; }
     }
 }
