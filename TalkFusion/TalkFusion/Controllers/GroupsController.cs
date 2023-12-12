@@ -4,16 +4,24 @@ using TalkFusion.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Channels;
+using Microsoft.AspNetCore.Identity;
 
 namespace TalkFusion.Controllers
 {
     public class GroupsController : Controller
     {
         private readonly ApplicationDbContext db;
-
-        public GroupsController(ApplicationDbContext context)
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
+        public GroupsController(
+        ApplicationDbContext context,
+        UserManager<ApplicationUser> userManager,
+        RoleManager<IdentityRole> roleManager
+        )
         {
             db = context;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -170,7 +178,7 @@ namespace TalkFusion.Controllers
             requestedGroup.AllCategories = GetAllCategories();
             if (ModelState.IsValid)
             {
-                requestedGroup.UserId = 0;
+              
                 db.Groups.Add(requestedGroup);
                 db.SaveChanges();
 

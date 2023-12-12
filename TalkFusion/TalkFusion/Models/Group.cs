@@ -15,15 +15,15 @@ namespace TalkFusion.Models
         [Required(ErrorMessage = "Group description is mandatory")]
         public string? Description { get; set; }
 
-        //[Required(ErrorMessage = "Group user is mandatory")]
-        public int? UserId { get; set; }
-
         [Required(ErrorMessage = "Group category is mandatory")]
         public int? CategoryId { get; set; }
 
         public virtual Category? Category { get; set; }
 
         public virtual ICollection<Channel>? Channels { get; set; }
+
+        //users that are part of this group
+        public virtual ICollection<UserGroup>? UserGroups { get; set; }
 
         //used in New() or Edit()
         [NotMapped]
