@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TalkFusion.Data;
@@ -6,6 +7,8 @@ using TalkFusion.Models;
 
 namespace TalkFusion.Controllers
 {
+
+    [Authorize(Roles="Admin")]
     public class CategoriesController : Controller
     {
         private readonly ApplicationDbContext db;
