@@ -27,35 +27,82 @@ namespace TalkFusion.Controllers
 
         public IActionResult Index()
         {
-            var currentUserId = _userManager.GetUserId(User);
+            // admin has a separate logic
+            if (!User.IsInRole("Admin"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
 
-            // select the groups where the current user is a member
-            var joinedGroups = from grp in db.Groups
-                         join usrgrp in db.UserGroups
-                         on grp.Id equals usrgrp.GroupId
-                         where usrgrp.UserId == currentUserId
-                         select grp;
+                // select the groups where the current user is a member
+                var joinedGroups = from grp in db.Groups
+                             join usrgrp in db.UserGroups
+                             on grp.Id equals usrgrp.GroupId
+                             where usrgrp.UserId == currentUserId
+                             select grp;
 
-            // select the groups moderated by the current user
-            var moderatedGroups = from grp in db.Groups
-                                  join usrgrp in db.UserGroups
-                                  on grp.Id equals usrgrp.GroupId
-                                  where usrgrp.UserId == currentUserId && usrgrp.IsModerator == true
-                                  select grp;
+                // select the groups moderated by the current user
+                var moderatedGroups = from grp in db.Groups
+                                      join usrgrp in db.UserGroups
+                                      on grp.Id equals usrgrp.GroupId
+                                      where usrgrp.UserId == currentUserId && usrgrp.IsModerator == true
+                                      select grp;
+
+                ViewBag.JoinedGroups = joinedGroups;
+                ViewBag.ModeratedGroups = moderatedGroups;
+            }
+            else
+            {
+                //selct all groups, only the admin will make use of this
+                var allGroups = from grp in db.Groups
+                                select grp;
+                ViewBag.AllGroups = allGroups;
+                ViewBag.JoinedGroups = null;
+                ViewBag.ModeratedGroups = null;
+            }
+            
 
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
             }
 
-            ViewBag.JoinedGroups = joinedGroups;
-            ViewBag.ModeratedGroups = moderatedGroups;  
-
             return View();
+        }
+
+        public IActionResult UnjoinedGroups()
+        {
+            var currentUserId= _userManager.GetUserId(User);
+
+            var unjoinedGroups= from grp in db.Groups 
+                                join usrgrp in db.UserGroups
+                                on grp.Id equals usrgrp.GroupId
+                                where usrgrp.UserId != currentUserId
+                                select grp;
+
+            ViewBag.UnJoinedGroups = unjoinedGroups;
+            return View();
+        }
+
+        [HttpPost]
+
+        public IActionResult Join(int id)
+        {
+            return Redirect("/Groups/Index");
         }
 
         public IActionResult Show(int id,int? channelId)
         {
+            // search if the user is a memeber of this group
+            var currentUserId = _userManager.GetUserId(User);
+            var userGroup = (from usrgrp in db.UserGroups
+                             where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                             select usrgrp).First();
+
+            // if the user is not just deny the access
+            if (userGroup == null)
+            {
+                return Redirect("/Groups/Index");
+            }
+
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id
                          select grp).First();
@@ -122,17 +169,22 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
-            // select the specific UserGroup to check if the user is a moderator
-            var currentUserId = _userManager.GetUserId(User);
-            var userGroup= (from usrgrp in db.UserGroups
-                           where usrgrp.GroupId == id && usrgrp.UserId==currentUserId
-                           select usrgrp).First();
 
-            // if the current user is not a moderator just yeet him out of the page
-            if (!(bool)userGroup.IsModerator)
+            if (!User.IsInRole("Admin"))
             {
-                return Redirect("/Groups/Index");
+                // select the specific UserGroup to check if the user is a moderator
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                // if the current user is not a moderator just yeet him out of the page
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
             }
+            
 
             var group = (from art in db.Groups.Include("Category")
                          where art.Id == id
@@ -143,20 +195,23 @@ namespace TalkFusion.Controllers
             return View(group);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Edit(int id, Group requestedGroup)
         {
-            // to be safe this code will go in here too
-            // select the specific UserGroup to check if the user is a moderator
-            var currentUserId = _userManager.GetUserId(User);
-            var userGroup = (from usrgrp in db.UserGroups
-                             where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
-                             select usrgrp).First();
-
-            // if the current user is not a moderator just yeet him out of the page
-            if (!(bool)userGroup.IsModerator)
+            if (!User.IsInRole("Admin"))
             {
-                return Redirect("/Groups/Index");
+                // select the specific UserGroup to check if the user is a moderator
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                // if the current user is not a moderator just yeet him out of the page
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
             }
 
             var group = db.Groups.Find(id);
@@ -185,9 +240,26 @@ namespace TalkFusion.Controllers
 
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public IActionResult Delete(int id)
         {
+
+            if (!User.IsInRole("Admin"))
+            {
+                // select the specific UserGroup to check if the user is a moderator
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                // if the current user is not a moderator just yeet him out of the page
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
+            }
+
             var oldGroup = db.Groups.Find(id);
 
             if (oldGroup != null)

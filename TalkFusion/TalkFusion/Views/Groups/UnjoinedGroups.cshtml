@@ -1,0 +1,42 @@
+﻿@{
+    ViewBag.pageTitle = "Join a group";
+}
+
+<div class="text-center">
+    <h1 class="text-center">@ViewBag.pageTitle</h1>
+</div>
+
+
+
+@if (ViewBag.UnjoinedGroups == null || User.IsInRole("Admin"))
+{
+    <h3>There was no group found.</h3>
+}
+
+else
+{
+    @foreach (var group in ViewBag.UnjoinedGroups)
+    {
+        <div class="card">
+            <div class="card-body">
+
+                <h2>@group.Title</h2>
+                <br>
+
+                <p>@group.Description</p>
+                <br>
+
+                <div class="d-flex justify-content-between justify-content-end">
+
+
+                    <a href="/Groups/Join/@group.Id" class="btn btn-success">Join group</a>
+
+                </div>
+
+            </div>
+        </div>
+
+        <br />
+    }
+}
+
