@@ -76,11 +76,18 @@ namespace TalkFusion.Controllers
         {
             var currentUserId= _userManager.GetUserId(User);
 
-            var unjoinedGroups= from grp in db.Groups 
-                                join usrgrp in db.UserGroups
-                                on grp.Id equals usrgrp.GroupId
-                                where usrgrp.UserId != currentUserId
-                                select grp;
+            //not like this!
+
+            //   var unjoinedGroups= from grp in db.Groups 
+            //                       join usrgrp in db.UserGroups
+            //                       on grp.Id equals usrgrp.GroupId
+            //                       where usrgrp.UserId != currentUserId
+            //                      select grp;
+
+            
+            var unjoinedGroups = from grp in db.Groups
+                                 where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
+                                 select grp;
 
             ViewBag.UnJoinedGroups = unjoinedGroups;
             return View();
@@ -106,7 +113,7 @@ namespace TalkFusion.Controllers
 
             TempData["message"] = "You have succesfully joined the group named: "+ group.Title + " !" ;
 
-            return Redirect("/Groups/Index");
+            return RedirectToAction("Index");
         }
 
         public IActionResult Show(int id,int? channelId)
@@ -120,7 +127,7 @@ namespace TalkFusion.Controllers
             // if the user is not just deny the access
             if (userGroup == null)
             {
-                return Redirect("/Groups/Index");
+                return RedirectToAction("Index");
             }
 
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
@@ -202,7 +209,7 @@ namespace TalkFusion.Controllers
                 // if the current user is not a moderator just yeet him out of the page
                 if (!(bool)userGroup.IsModerator)
                 {
-                    return Redirect("/Groups/Index");
+                    return RedirectToAction("Index");
                 }
             }
             
@@ -231,7 +238,7 @@ namespace TalkFusion.Controllers
                 // if the current user is not a moderator just yeet him out of the page
                 if (!(bool)userGroup.IsModerator)
                 {
-                    return Redirect("/Groups/Index");
+                    return RedirectToAction("Index");
                 }
             }
 
