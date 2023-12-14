@@ -46,8 +46,11 @@ namespace TalkFusion.Controllers
                                       where usrgrp.UserId == currentUserId && usrgrp.IsModerator == true
                                       select grp;
 
-                ViewBag.JoinedGroups = joinedGroups;
-                ViewBag.ModeratedGroups = moderatedGroups;
+                // so that the item in the viewbag will pe null 
+                if(joinedGroups.Any())
+                    ViewBag.JoinedGroups = joinedGroups;
+                if(moderatedGroups.Any())
+                    ViewBag.ModeratedGroups = moderatedGroups;
             }
             else
             {
@@ -68,6 +71,7 @@ namespace TalkFusion.Controllers
             return View();
         }
 
+        // returns a view of all the groups that are unjoined
         public IActionResult UnjoinedGroups()
         {
             var currentUserId= _userManager.GetUserId(User);
@@ -82,10 +86,26 @@ namespace TalkFusion.Controllers
             return View();
         }
 
+        // method for joining a group
+        // meaning adding a new element to UserGroup
         [HttpPost]
 
         public IActionResult Join(int id)
         {
+            
+            var group = (from grp in db.Groups
+                        where grp.Id == id
+                        select grp).First();
+            
+            // create new UserGroup entity that binds the current user with the selected group
+            var currentUserId = _userManager.GetUserId(User);
+            var userGroup = new UserGroup { UserId = currentUserId, GroupId = id, IsModerator = false };
+
+            db.UserGroups.Add(userGroup);   
+            db.SaveChanges();
+
+            TempData["message"] = "You have succesfully joined the group named: "+ group.Title + " !" ;
+
             return Redirect("/Groups/Index");
         }
 
@@ -106,6 +126,7 @@ namespace TalkFusion.Controllers
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id
                          select grp).First();
+
             group.Channels = group.Channels.OrderBy(ch => ch.Id).ToList();
 
             if (channelId != null)
@@ -166,7 +187,7 @@ namespace TalkFusion.Controllers
             return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
         }
 
-        [Authorize(Roles = "Admin")]
+        
         public IActionResult Edit(int id)
         {
 
@@ -195,7 +216,7 @@ namespace TalkFusion.Controllers
             return View(group);
         }
 
-        [Authorize(Roles = "Admin")]
+        
         [HttpPost]
         public IActionResult Edit(int id, Group requestedGroup)
         {
@@ -240,7 +261,7 @@ namespace TalkFusion.Controllers
 
         }
 
-        [Authorize(Roles = "Admin")]
+        
         [HttpPost]
         public IActionResult Delete(int id)
         {

@@ -28,6 +28,13 @@ else
 
                 <div class="d-flex justify-content-between justify-content-end">
 
+                    @using (Html.BeginForm(actionName: "Join",
+                    controllerName: "Groups",
+                    method: FormMethod.Post,
+                    routeValues: new { id = group.Id }))
+                    {
+                        <button class="btn btn-success" type="submit">Join Group</button>
+                    }
 
                     <a href="/Groups/Join/@group.Id" class="btn btn-success">Join group</a>
 
