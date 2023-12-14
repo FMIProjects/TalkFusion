@@ -46,6 +46,15 @@
 
                     <a href="/Groups/Show/@group.Id" class="btn btn-success">See group</a>
 
+
+                    @using (Html.BeginForm(actionName: "Leave",
+                    controllerName: "Groups",
+                    method: FormMethod.Post,
+                    routeValues: new { id = group.Id }))
+                    {
+                        <button class="btn btn-danger" type="submit">Leave Group</button>
+                    }
+
                 </div>
 
             </div>

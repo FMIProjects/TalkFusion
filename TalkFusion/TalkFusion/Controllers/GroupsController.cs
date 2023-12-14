@@ -89,7 +89,10 @@ namespace TalkFusion.Controllers
                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
                                  select grp;
 
-            ViewBag.UnJoinedGroups = unjoinedGroups;
+            // so that the viewbag will be null in view
+            if(unjoinedGroups.Any())
+                ViewBag.UnJoinedGroups = unjoinedGroups;
+
             return View();
         }
 
@@ -112,6 +115,31 @@ namespace TalkFusion.Controllers
             db.SaveChanges();
 
             TempData["message"] = "You have succesfully joined the group named: "+ group.Title + " !" ;
+
+            return RedirectToAction("Index");
+        }
+
+        // method for leaving a group
+        // meaning remove the UserGroup element that binds the user and group
+        [HttpPost]
+        public IActionResult Leave(int id)
+        {
+
+            var group = (from grp in db.Groups
+                         where grp.Id == id
+                         select grp).First();
+
+            //select the userGroup that binds the user and the group
+            var currentUserId = _userManager.GetUserId(User);
+            var userGroup = (from usrgrp in db.UserGroups
+                            where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                            select usrgrp).First(); 
+                           
+
+            db.UserGroups.Remove(userGroup);
+            db.SaveChanges();
+
+            TempData["message"] = "You have succesfully leaved the group named: " + group.Title + " !";
 
             return RedirectToAction("Index");
         }
