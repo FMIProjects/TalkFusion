@@ -17,7 +17,7 @@
 }
 
 <br />
-@foreach (var group in ViewBag.Groups)
+@foreach (var group in ViewBag.JoinedGroups)
 {
     <div class="card">
         <div class="card-body">
@@ -38,7 +38,7 @@
                method: FormMethod.Post,
                routeValues: new { id = group.Id }))
                 {
-                    <button class="btn btn-danger" type="submit">Delete Category</button>
+                    <button class="btn btn-danger" type="submit">Delete Group</button>
                 }
 
             </div>

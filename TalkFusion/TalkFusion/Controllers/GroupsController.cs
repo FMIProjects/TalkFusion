@@ -26,15 +26,29 @@ namespace TalkFusion.Controllers
 
         public IActionResult Index()
         {
-            var groups = from g in db.Groups select g;
+            var currentUserId = _userManager.GetUserId(User);
 
+            // select the groups where the current user is a member
+            var joinedGroups = from grp in db.Groups
+                         join usrgrp in db.UserGroups
+                         on grp.Id equals usrgrp.GroupId
+                         where usrgrp.UserId == currentUserId
+                         select grp;
+
+            // select the groups moderated by the current user
+            var moderatedGroups = from grp in db.Groups
+                                  join usrgrp in db.UserGroups
+                                  on grp.Id equals usrgrp.GroupId
+                                  where usrgrp.UserId == currentUserId && usrgrp.IsModerator == true
+                                  select grp;
 
             if (TempData.ContainsKey("message"))
             {
                 ViewBag.Message = TempData["message"];
             }
 
-            ViewBag.Groups = groups;
+            ViewBag.JoinedGroups = joinedGroups;
+            ViewBag.ModeratedGroups = moderatedGroups;  
 
             return View();
         }
@@ -178,8 +192,22 @@ namespace TalkFusion.Controllers
             requestedGroup.AllCategories = GetAllCategories();
             if (ModelState.IsValid)
             {
-              
+
+                // first add the requested group and then save the changes to that the GroupId is generated
                 db.Groups.Add(requestedGroup);
+                db.SaveChanges();
+
+                // create new UserGroup that will have the correct GroupId then add to DB and save the changes
+                var userGroup = new UserGroup
+                {
+                    UserId = _userManager.GetUserId(User),
+                    GroupId = requestedGroup.Id,
+                    IsModerator = true
+
+                };
+
+                db.UserGroups.Add(userGroup);
+
                 db.SaveChanges();
 
                 TempData["message"] = "The group named: " + requestedGroup.Title + " has been succesfully created";
