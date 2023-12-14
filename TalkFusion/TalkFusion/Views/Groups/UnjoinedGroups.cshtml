@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.pageTitle = "Join a group";
+}
+
+<div class="text-center">
+    <h1 class="text-center">@ViewBag.pageTitle</h1>
+</div>
+
+
+
+@if (ViewBag.UnjoinedGroups == null || User.IsInRole("Admin"))
+{
+    <h3>There was no group found.</h3>
+}
+
+else
+{
+    @foreach (var group in ViewBag.UnjoinedGroups)
+    {
+        <div class="card">
+            <div class="card-body">
+
+                <h2>@group.Title</h2>
+                <br>
+
+                <p>@group.Description</p>
+                <br>
+
+                <div class="d-flex justify-content-between justify-content-end">
+
+                    @using (Html.BeginForm(actionName: "Join",
+                    controllerName: "Groups",
+                    method: FormMethod.Post,
+                    routeValues: new { id = group.Id }))
+                    {
+                        <button class="btn btn-success" type="submit">Join Group</button>
+                    }
+
+
+                </div>
+
+            </div>
+        </div>
+
+        <br />
+    }
+}
+

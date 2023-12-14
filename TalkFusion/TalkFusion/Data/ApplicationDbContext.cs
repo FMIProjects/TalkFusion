@@ -32,7 +32,8 @@ modelBuilder)
             .HasKey(ab => new {
                 ab.Id,
                 ab.UserId,
-                ab.GroupId
+                ab.GroupId,
+                ab.IsModerator
             });
 
             // definire relatii cu modelele Bookmark si Article (FK)
