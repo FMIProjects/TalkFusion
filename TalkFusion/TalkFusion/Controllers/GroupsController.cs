@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Channels;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TalkFusion.Controllers
 {
@@ -118,8 +119,20 @@ namespace TalkFusion.Controllers
             return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(int id)
         {
+            // select the specific UserGroup to check if the user is a moderator
+            var currentUserId = _userManager.GetUserId(User);
+            var userGroup= (from usrgrp in db.UserGroups
+                           where usrgrp.GroupId == id && usrgrp.UserId==currentUserId
+                           select usrgrp).First();
+
+            // if the current user is not a moderator just yeet him out of the page
+            if (!(bool)userGroup.IsModerator)
+            {
+                return Redirect("/Groups/Index");
+            }
 
             var group = (from art in db.Groups.Include("Category")
                          where art.Id == id
@@ -133,6 +146,19 @@ namespace TalkFusion.Controllers
         [HttpPost]
         public IActionResult Edit(int id, Group requestedGroup)
         {
+            // to be safe this code will go in here too
+            // select the specific UserGroup to check if the user is a moderator
+            var currentUserId = _userManager.GetUserId(User);
+            var userGroup = (from usrgrp in db.UserGroups
+                             where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                             select usrgrp).First();
+
+            // if the current user is not a moderator just yeet him out of the page
+            if (!(bool)userGroup.IsModerator)
+            {
+                return Redirect("/Groups/Index");
+            }
+
             var group = db.Groups.Find(id);
             if (group != null)
                 group.AllCategories = GetAllCategories();
@@ -209,6 +235,7 @@ namespace TalkFusion.Controllers
                 db.UserGroups.Add(userGroup);
 
                 db.SaveChanges();
+
 
                 TempData["message"] = "The group named: " + requestedGroup.Title + " has been succesfully created";
 

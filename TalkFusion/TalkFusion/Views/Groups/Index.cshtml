@@ -8,7 +8,7 @@
 
 
 <a href="Groups/New" class="btn btn-success">Add a new Group</a>
-<br />
+<br /><br />
 
 
 @if (ViewBag.Message != null)
@@ -16,7 +16,13 @@
     <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
 }
 
+@if (ViewBag.JoinedGroups != null)
+{
+     <h3>Your groups</h3>   
+}
+
 <br />
+
 @foreach (var group in ViewBag.JoinedGroups)
 {
     <div class="card">
@@ -29,21 +35,53 @@
             <br>
 
             <div class="d-flex justify-content-between justify-content-end">
-
-                <a href="/Groups/Edit/@group.Id" class="btn btn-success">Edit group</a>
+               
+               
                 <a href="/Groups/Show/@group.Id" class="btn btn-success">See group</a>
-
-                @using (Html.BeginForm(actionName: "Delete",
-               controllerName: "Groups",
-               method: FormMethod.Post,
-               routeValues: new { id = group.Id }))
-                {
-                    <button class="btn btn-danger" type="submit">Delete Group</button>
-                }
 
             </div>
 
         </div>
     </div>
+
     <br />
 }
+
+    @if (ViewBag.ModeratedGroups != null)
+    {
+        <h3>Moderated groups</h3>
+    }
+
+    <br />
+
+    @foreach (var group in ViewBag.ModeratedGroups)
+    {
+        <div class="card">
+            <div class="card-body">
+
+                <h2>@group.Title</h2>
+                <br>
+
+                <p>@group.Description</p>
+                <br>
+
+                <div class="d-flex justify-content-between justify-content-end">
+
+                    <a href="/Groups/Edit/@group.Id" class="btn btn-success">Edit group</a>
+                    <a href="/Groups/Show/@group.Id" class="btn btn-success">See group</a>
+
+                    @using (Html.BeginForm(actionName: "Delete",
+                   controllerName: "Groups",
+                   method: FormMethod.Post,
+                   routeValues: new { id = group.Id }))
+                    {
+                        <button class="btn btn-danger" type="submit">Delete Group</button>
+                    }
+
+                </div>
+
+            </div>
+        </div>
+
+        <br />
+    }
