@@ -3,7 +3,6 @@ using TalkFusion.Data;
 using TalkFusion.Models;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Channels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 
@@ -98,7 +97,6 @@ namespace TalkFusion.Controllers
             return View();
         }
 
-
         // method for joining a group
         // meaning adding a new element to UserGroup
         [HttpPost]
@@ -189,17 +187,24 @@ namespace TalkFusion.Controllers
 
         public IActionResult Show(int id, int? channelId)
         {
-            // search if the user is a memeber of this group
-            var currentUserId = _userManager.GetUserId(User);
-            var userGroup = (from usrgrp in db.UserGroups
-                             where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
-                             select usrgrp).First();
-
-            // if the user is not just deny the access
-            if (userGroup == null)
+            if (User.IsInRole("User"))
             {
-                return RedirectToAction("Index");
+                // search if the user is a memeber of this group
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+                ViewBag.Moderator = userGroup.IsModerator;
+
+                // if the user is not just deny the access
+                if (userGroup == null)
+                {
+                    return RedirectToAction("Index");
+                }
             }
+
+            if(User.IsInRole("Admin"))
+                ViewBag.Moderator = true;
 
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id

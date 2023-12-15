@@ -6,13 +6,15 @@
     <h1 class="text-center">@ViewBag.pageTitle</h1>
 </div>
 
-
+<a href="Groups/ModeratedGroups" class="btn btn-success">Moderated Groups</a>
+<a href="Groups/Index" class="btn btn-success">My Groups</a>
+<br />
+<br />
 
 @if (ViewBag.UnjoinedGroups == null || User.IsInRole("Admin"))
 {
     <h3>There was no group found.</h3>
 }
-
 else
 {
     @foreach (var group in ViewBag.UnjoinedGroups)
