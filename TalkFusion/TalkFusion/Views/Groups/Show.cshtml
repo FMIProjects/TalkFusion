@@ -11,6 +11,11 @@
         <h3>@Model.Title</h3>
         <h4>@Model.Category.CategoryName</h4>
 
+        <!-- Add Channel Button appears only if the user is moderator-->
+        @if (ViewBag.Moderator)
+        {
+            <button id="toggleButton" onclick="toggleForm()" class="btn btn-dark"><i class="bi bi-plus-circle"></i></button>
+        }
     </div>
 
     <div class="Channel">
@@ -26,12 +31,8 @@
         }
     </div>
 
-    <div class="Channels" style="overflow-y: auto; max-height: 85vh;">
-
-        <button id="toggleButton" onclick="toggleForm()">+</button>
+    <div class="Channels" style="overflow-y: auto;">
         <br />
-        <br />
-
         <!-- Form New Channel -->
         <form method="post" action="/Groups/Show" id="toggle" style="display:none;">
 
@@ -64,17 +65,20 @@
                     <a class="btn btn-dark btn-lg active" href="/Groups/Show/@Model.Id/@channel.Id">@channel.Title</a>
                 </div>
 
-                <!--Edit Channel-->
-                <div class="p-2">
-                    <a href="/Channels/Edit/@channel.Id" type="button" class="btn btn-dark"><i class="bi bi-pencil-square"></i></a>
-                </div>
+                @if (ViewBag.Moderator)
+                {
+                    <!--Edit Channel-->
+                    <div class="p-2">
+                        <a href="/Channels/Edit/@channel.Id" type="button" class="btn btn-dark"><i class="bi bi-pencil-square"></i></a>
+                    </div>
 
-                <!--Delete Channel-->
-                <form method="post" action="/Channels/Delete/@channel.Id" class="p-2">
-                    <button type="submit" class="btn btn-danger">
+                    <!--Delete Channel-->
+                    <form method="post" action="/Channels/Delete/@channel.Id" class="p-2">
+                        <button type="submit" class="btn btn-danger">
                         <i class="bi bi-trash3"></i>
                     </button>
                 </form>
+                }
             </div>
         }
     </div>
