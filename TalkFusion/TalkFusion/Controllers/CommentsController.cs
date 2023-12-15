@@ -26,6 +26,25 @@ namespace TalkFusion.Controllers
         public IActionResult Delete(int id)
         {
             var comment = db.Comments.Find(id);
+
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+
+                var currentChannel = (from chn in db.Channels.Include("Comments")
+                                      where chn.Id == comment.ChannelId
+                                      select chn).First();
+
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == currentChannel.GroupId && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                if (!(bool)userGroup.IsModerator && comment.UserId != currentUserId)
+                {
+                    return Redirect("/Groups/Index/");
+                }
+            }
+
             if (comment != null)
             {
                 db.Comments.Remove(comment);
@@ -41,6 +60,15 @@ namespace TalkFusion.Controllers
         public IActionResult Edit(int id)
         {
             var comment = db.Comments.Find(id);
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+
+                if (comment.UserId != currentUserId)
+                {
+                    return Redirect("/Groups/Index/");
+                }
+            }
             return View(comment);
         }
 
@@ -48,6 +76,15 @@ namespace TalkFusion.Controllers
         public IActionResult Edit(int id, Comment requestedComment)
         {
             var comment = db.Comments.Find(id);
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+
+                if (comment.UserId != currentUserId)
+                {
+                    return Redirect("/Groups/Index/");
+                }
+            }
             requestedComment.ChannelId = comment.ChannelId;
             if (ModelState.IsValid)
             {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Channels;
 
 namespace TalkFusion.Controllers
 {
@@ -24,9 +25,9 @@ namespace TalkFusion.Controllers
             _roleManager = roleManager;
         }
 
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            // admin has a separate logic
             if (User.IsInRole("User"))
             {
                 var currentUserId = _userManager.GetUserId(User);
@@ -67,9 +68,9 @@ namespace TalkFusion.Controllers
         {
             var currentUserId = _userManager.GetUserId(User);
 
-            var unjoinedGroups = from grp in db.Groups
-                                 where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
-                                 select grp;
+            var unjoinedGroups = (from grp in db.Groups
+                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
+                                  select grp);
 
             // so that the viewbag will be null in view
             if (unjoinedGroups.Any())
@@ -100,7 +101,7 @@ namespace TalkFusion.Controllers
         // method for joining a group
         // meaning adding a new element to UserGroup
         [HttpPost]
-
+        [Authorize(Roles = "User")]
         public IActionResult Join(int id)
         {
 
@@ -123,6 +124,7 @@ namespace TalkFusion.Controllers
         // method for leaving a group
         // meaning remove the UserGroup element that binds the user and group
         [HttpPost]
+        [Authorize(Roles = "User")]
         public IActionResult Leave(int id)
         {
 
@@ -185,8 +187,12 @@ namespace TalkFusion.Controllers
             return RedirectToAction("Index");
         }
 
+
+
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Show(int id, int? channelId)
         {
+            ViewBag.CurrentUser = _userManager.GetUserId(User);
             if (User.IsInRole("User"))
             {
                 // search if the user is a memeber of this group
@@ -194,17 +200,17 @@ namespace TalkFusion.Controllers
                 var userGroup = (from usrgrp in db.UserGroups
                                  where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
                                  select usrgrp).First();
-                ViewBag.Moderator = userGroup.IsModerator;
 
                 // if the user is not just deny the access
                 if (userGroup == null)
                 {
                     return RedirectToAction("Index");
                 }
+                ViewBag.ShowButtons = userGroup.IsModerator;
             }
 
-            if(User.IsInRole("Admin"))
-                ViewBag.Moderator = true;
+            if (User.IsInRole("Admin"))
+                ViewBag.ShowButtons = true;
 
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id
@@ -224,9 +230,12 @@ namespace TalkFusion.Controllers
 
         // Show  - After New Channel 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Show([FromForm] Models.Channel? channel)
         {
             // After Creating a Channel
+            ViewBag.ShowButtons = true;
+            ViewBag.CurrentUser = _userManager.GetUserId(User);
             if (channel != null)
             {
                 if (ModelState.IsValid)
@@ -248,10 +257,12 @@ namespace TalkFusion.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult AddComment([FromForm] Comment comment)
         {
             if (comment != null)
             {
+                comment.UserId = _userManager.GetUserId(User);
                 comment.Date = DateTime.Now;
                 if (ModelState.IsValid)
                 {
@@ -261,7 +272,7 @@ namespace TalkFusion.Controllers
                 }
                 else
                 {
-
+                    TempData["message"] = "Comment is invalid";
                 }
             }
             var currentChannel = (from chn in db.Channels.Include("Comments")
@@ -270,7 +281,7 @@ namespace TalkFusion.Controllers
             return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
         }
 
-
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id)
         {
 
@@ -301,6 +312,7 @@ namespace TalkFusion.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id, Group requestedGroup)
         {
             if (User.IsInRole("User"))
@@ -346,6 +358,7 @@ namespace TalkFusion.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Delete(int id)
         {
 
@@ -377,6 +390,7 @@ namespace TalkFusion.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "User,Admin")]
         public IActionResult New()
         {
 
@@ -389,6 +403,7 @@ namespace TalkFusion.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult New(Group requestedGroup)
         {
             requestedGroup.AllCategories = GetAllCategories();
@@ -423,7 +438,6 @@ namespace TalkFusion.Controllers
                 return View(requestedGroup);
             }
         }
-
 
         [NonAction]
         public IEnumerable<SelectListItem> GetAllCategories()

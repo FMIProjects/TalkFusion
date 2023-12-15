@@ -12,7 +12,7 @@
         <h4>@Model.Category.CategoryName</h4>
 
         <!-- Add Channel Button appears only if the user is moderator-->
-        @if (ViewBag.Moderator)
+        @if (ViewBag.ShowButtons)
         {
             <button id="toggleButton" onclick="toggleForm()" class="btn btn-dark"><i class="bi bi-plus-circle"></i></button>
         }
@@ -65,7 +65,7 @@
                     <a class="btn btn-dark btn-lg active" href="/Groups/Show/@Model.Id/@channel.Id">@channel.Title</a>
                 </div>
 
-                @if (ViewBag.Moderator)
+                @if (ViewBag.ShowButtons)
                 {
                     <!--Edit Channel-->
                     <div class="p-2">
@@ -75,9 +75,9 @@
                     <!--Delete Channel-->
                     <form method="post" action="/Channels/Delete/@channel.Id" class="p-2">
                         <button type="submit" class="btn btn-danger">
-                        <i class="bi bi-trash3"></i>
-                    </button>
-                </form>
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </form>
                 }
             </div>
         }
@@ -89,27 +89,48 @@
             <!--See Comment-->
             @foreach (var comment in ViewBag.Channel.Comments)
             {
-                <div class="card" style="width: 50%;margin-left: auto;">
-                    <div class="card-body">
-                        <p class="card-title">@comment.Text</p>
-
-                        <!--Edit Comment-->
-
-                        <div class="p-2">
-                            <a href="/Comments/Edit/@comment.Id" type="button" class="btn btn-dark"><i class="bi bi-pencil-square"></i></a>
-                        </div>
-
-                        <!--Delete Comment-->
-
-                        <form method="post" action="/Comments/Delete/@comment.Id" class="p-2">
-                            <button type="submit" class="btn btn-danger">
-                                <i class="bi bi-trash3"></i>
-                            </button>
+                @if (ViewBag.CurrentUser == comment.UserId)
+                {
+                    <div class="card text-white bg-dark mb-3" style="width: 50%;margin-left: auto;">
+                        <div class="card-body">
+                            <p class="card-title">@comment.Text</p>
                             <p>@comment.Date</p>
-                        </form>
+                            <!--Edit Comment-->
 
+                            <div class="p-2">
+                                <a href="/Comments/Edit/@comment.Id" type="button" class="btn btn-light"><i class="bi bi-pencil-square"></i></a>
+                            </div>
+
+                            <!--Delete Comment-->
+
+                            <form method="post" action="/Comments/Delete/@comment.Id" class="p-2">
+                                <button type="submit" class="btn btn-danger">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </form>
+
+                        </div>
                     </div>
-                </div>
+                }
+                else
+                {
+                    <div class="card text-white bg-dark mb-3" style="width: 50%;margin-right: auto;">
+                        <div class="card-body">
+                            <p class="card-title">@comment.Text</p>
+                            <p>@comment.Date</p>
+                            @if (ViewBag.ShowButtons)
+                            {
+                                <!--Delete Comment-->
+
+                                <form method="post" action="/Comments/Delete/@comment.Id" class="p-2">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                }
             }
 
             <form method="post" asp-controller="Groups" asp-action="AddComment" class="mt-4">
