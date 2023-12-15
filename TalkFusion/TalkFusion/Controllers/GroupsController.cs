@@ -138,10 +138,49 @@ namespace TalkFusion.Controllers
                              where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
                              select usrgrp).First();
 
-            // leave logic !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            var allUsers = (from usrgrp in db.UserGroups
+                            where usrgrp.GroupId == id
+                            select usrgrp).Count();
 
-            db.UserGroups.Remove(userGroup);
-            db.SaveChanges();
+            var allModerators = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.IsModerator == true
+                                 select usrgrp).Count();
+
+            // delete the group if the user is moderator and he's the only member
+            if ((bool)userGroup.IsModerator && allUsers == 1)
+            {
+                db.UserGroups.Remove(userGroup);
+                db.Groups.Remove(group);
+                db.SaveChanges();
+            }
+            else
+            {
+                if ((bool)userGroup.IsModerator && allUsers != 1 && allModerators == 1)
+                {
+                    // if he's the only moderator make a random member of the group a moderator
+                    db.UserGroups.Remove(userGroup);
+                    db.SaveChanges();
+
+                    var randomUser = (from usrgrp in db.UserGroups
+                                      where usrgrp.GroupId == id
+                                      select usrgrp).First();
+                    var newModerator = new UserGroup
+                    {
+                        UserId = randomUser.UserId,
+                        GroupId = randomUser.GroupId,
+                        IsModerator = true
+                    };
+                    db.UserGroups.Remove(randomUser);
+                    db.UserGroups.Add(newModerator);
+                    db.SaveChanges();
+                }
+                // there is another moderator still in the group
+                else
+                {
+                    db.UserGroups.Remove(userGroup);
+                    db.SaveChanges();
+                }
+            }
 
             TempData["message"] = "You have succesfully leaved the group named: " + group.Title + " !";
 
