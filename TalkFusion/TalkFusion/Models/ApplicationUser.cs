@@ -4,6 +4,7 @@ namespace TalkFusion.Models
 {
     public class ApplicationUser : IdentityUser
     {
+        public string? NickName { get; set; }
 
         // a user can be a member of many groups
         public virtual ICollection<UserGroup>? UserGroups { get; set; }

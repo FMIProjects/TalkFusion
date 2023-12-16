@@ -19,5 +19,10 @@ namespace TalkFusion.Models
         //user id
         public string? UserId { get; set; }
         public virtual ApplicationUser? User { get; set; }
+
+        // file url
+        public string? File { get; set; }
+
+        public string? FileType { get; set; }
     }
 }

@@ -5,28 +5,36 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using System.Threading.Channels;
+using System;
+using System.Text.RegularExpressions;
 
 namespace TalkFusion.Controllers
 {
     public class GroupsController : Controller
     {
+        private IWebHostEnvironment _env;
+
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
         public GroupsController(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager
+        RoleManager<IdentityRole> roleManager,
+        IWebHostEnvironment env
         )
         {
             db = context;
+            _env = env;
             _userManager = userManager;
             _roleManager = roleManager;
         }
 
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
-            // admin has a separate logic
             if (User.IsInRole("User"))
             {
                 var currentUserId = _userManager.GetUserId(User);
@@ -67,9 +75,9 @@ namespace TalkFusion.Controllers
         {
             var currentUserId = _userManager.GetUserId(User);
 
-            var unjoinedGroups = from grp in db.Groups
-                                 where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
-                                 select grp;
+            var unjoinedGroups = (from grp in db.Groups
+                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
+                                  select grp);
 
             // so that the viewbag will be null in view
             if (unjoinedGroups.Any())
@@ -100,7 +108,7 @@ namespace TalkFusion.Controllers
         // method for joining a group
         // meaning adding a new element to UserGroup
         [HttpPost]
-
+        [Authorize(Roles = "User")]
         public IActionResult Join(int id)
         {
 
@@ -123,6 +131,7 @@ namespace TalkFusion.Controllers
         // method for leaving a group
         // meaning remove the UserGroup element that binds the user and group
         [HttpPost]
+        [Authorize(Roles = "User")]
         public IActionResult Leave(int id)
         {
 
@@ -185,8 +194,12 @@ namespace TalkFusion.Controllers
             return RedirectToAction("Index");
         }
 
+
+
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Show(int id, int? channelId)
         {
+            ViewBag.CurrentUser = _userManager.GetUserId(User);
             if (User.IsInRole("User"))
             {
                 // search if the user is a memeber of this group
@@ -194,17 +207,20 @@ namespace TalkFusion.Controllers
                 var userGroup = (from usrgrp in db.UserGroups
                                  where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
                                  select usrgrp).First();
-                ViewBag.Moderator = userGroup.IsModerator;
 
                 // if the user is not just deny the access
                 if (userGroup == null)
                 {
                     return RedirectToAction("Index");
                 }
+                ViewBag.ShowButtons = userGroup.IsModerator;
             }
 
-            if(User.IsInRole("Admin"))
-                ViewBag.Moderator = true;
+            if (User.IsInRole("Admin"))
+            {
+                ViewBag.ShowButtons = true;
+                ViewBag.IsAdmin = true;
+            }
 
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id
@@ -217,6 +233,11 @@ namespace TalkFusion.Controllers
                 var currentChannel = (from chn in db.Channels.Include("Comments")
                                       where chn.Id == channelId
                                       select chn).First();
+                var comments = (from comm in db.Comments.Include(c => c.Channel).Include(c => c.User)
+                                where comm.ChannelId == channelId
+                                select comm);
+
+                ViewBag.Comments = comments;
                 ViewBag.Channel = currentChannel;
             }
             return View(group);
@@ -224,9 +245,14 @@ namespace TalkFusion.Controllers
 
         // Show  - After New Channel 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Show([FromForm] Models.Channel? channel)
         {
             // After Creating a Channel
+            ViewBag.ShowButtons = true;
+            if (User.IsInRole("Admin"))
+                ViewBag.IsAdmin = true;
+            ViewBag.CurrentUser = _userManager.GetUserId(User);
             if (channel != null)
             {
                 if (ModelState.IsValid)
@@ -248,10 +274,53 @@ namespace TalkFusion.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddComment([FromForm] Comment comment)
+        [Authorize(Roles = "User,Admin")]
+        public async Task<IActionResult> AddComment([FromForm] Comment comment, IFormFile CommentFile)
         {
-            if (comment != null)
+            string? databaseFileName = "";
+            if (CommentFile.Length > 0)
             {
+                var match1 = Regex.Match(CommentFile.FileName, "\\.(gif|jpe?g|tiff?|png|webp|bmp)$", RegexOptions.IgnoreCase);
+                var match2 = Regex.Match(CommentFile.FileName, "\\.(mp4|mov)$", RegexOptions.IgnoreCase);
+
+                if (match1.Success)
+                {
+                    comment.FileType = "image";
+                    var storagePath = Path.Combine(
+                    _env.WebRootPath,
+                    "files/images/",
+                    CommentFile.FileName
+                    );
+
+                    databaseFileName = "/files/images/" + CommentFile.FileName;
+
+                    using (var fileStream = new FileStream(storagePath, FileMode.Create))
+                    {
+                        await CommentFile.CopyToAsync(fileStream);
+                    }
+                }
+                if (match2.Success)
+                {
+                    comment.FileType = "video";
+                    var storagePath = Path.Combine(
+                    _env.WebRootPath,
+                    "files/videos/",
+                    CommentFile.FileName
+                    );
+
+                    databaseFileName = "/files/videos/" + CommentFile.FileName;
+
+                    using (var fileStream = new FileStream(storagePath, FileMode.Create))
+                    {
+                        await CommentFile.CopyToAsync(fileStream);
+                    }
+                }
+            }
+
+            comment.File = databaseFileName;
+            if (comment.Text != null)
+            {
+                comment.UserId = _userManager.GetUserId(User);
                 comment.Date = DateTime.Now;
                 if (ModelState.IsValid)
                 {
@@ -261,7 +330,7 @@ namespace TalkFusion.Controllers
                 }
                 else
                 {
-
+                    TempData["message"] = "Comment is invalid";
                 }
             }
             var currentChannel = (from chn in db.Channels.Include("Comments")
@@ -270,7 +339,7 @@ namespace TalkFusion.Controllers
             return Redirect("/Groups/Show/" + currentChannel.GroupId + "/" + comment.ChannelId);
         }
 
-
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id)
         {
 
@@ -301,7 +370,8 @@ namespace TalkFusion.Controllers
 
 
         [HttpPost]
-        public IActionResult Edit(int id, Group requestedGroup)
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult Edit(int id, Models.Group requestedGroup)
         {
             if (User.IsInRole("User"))
             {
@@ -346,6 +416,7 @@ namespace TalkFusion.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "User,Admin")]
         public IActionResult Delete(int id)
         {
 
@@ -377,10 +448,11 @@ namespace TalkFusion.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "User,Admin")]
         public IActionResult New()
         {
 
-            var dummyGroup = new Group
+            var dummyGroup = new Models.Group
             {
                 AllCategories = GetAllCategories()
             };
@@ -389,7 +461,8 @@ namespace TalkFusion.Controllers
         }
 
         [HttpPost]
-        public IActionResult New(Group requestedGroup)
+        [Authorize(Roles = "User,Admin")]
+        public IActionResult New(Models.Group requestedGroup)
         {
             requestedGroup.AllCategories = GetAllCategories();
             if (ModelState.IsValid)
@@ -423,7 +496,6 @@ namespace TalkFusion.Controllers
                 return View(requestedGroup);
             }
         }
-
 
         [NonAction]
         public IEnumerable<SelectListItem> GetAllCategories()
