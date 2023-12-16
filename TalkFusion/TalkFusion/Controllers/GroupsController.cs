@@ -6,21 +6,28 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Channels;
+using System;
+using System.Text.RegularExpressions;
 
 namespace TalkFusion.Controllers
 {
     public class GroupsController : Controller
     {
+        private IWebHostEnvironment _env;
+
         private readonly ApplicationDbContext db;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+
         public GroupsController(
         ApplicationDbContext context,
         UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager
+        RoleManager<IdentityRole> roleManager,
+        IWebHostEnvironment env
         )
         {
             db = context;
+            _env = env;
             _userManager = userManager;
             _roleManager = roleManager;
         }
@@ -210,7 +217,10 @@ namespace TalkFusion.Controllers
             }
 
             if (User.IsInRole("Admin"))
+            {
                 ViewBag.ShowButtons = true;
+                ViewBag.IsAdmin = true;
+            }
 
             var group = (from grp in db.Groups.Include("Category").Include("Channels")
                          where grp.Id == id
@@ -240,6 +250,8 @@ namespace TalkFusion.Controllers
         {
             // After Creating a Channel
             ViewBag.ShowButtons = true;
+            if (User.IsInRole("Admin"))
+                ViewBag.IsAdmin = true;
             ViewBag.CurrentUser = _userManager.GetUserId(User);
             if (channel != null)
             {
@@ -263,9 +275,50 @@ namespace TalkFusion.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult AddComment([FromForm] Comment comment)
+        public async Task<IActionResult> AddComment([FromForm] Comment comment, IFormFile CommentFile)
         {
-            if (comment != null)
+            string? databaseFileName = "";
+            if (CommentFile.Length > 0)
+            {
+                var match1 = Regex.Match(CommentFile.FileName, "\\.(gif|jpe?g|tiff?|png|webp|bmp)$", RegexOptions.IgnoreCase);
+                var match2 = Regex.Match(CommentFile.FileName, "\\.(mp4|mov)$", RegexOptions.IgnoreCase);
+
+                if (match1.Success)
+                {
+                    comment.FileType = "image";
+                    var storagePath = Path.Combine(
+                    _env.WebRootPath,
+                    "files/images/",
+                    CommentFile.FileName
+                    );
+
+                    databaseFileName = "/files/images/" + CommentFile.FileName;
+
+                    using (var fileStream = new FileStream(storagePath, FileMode.Create))
+                    {
+                        await CommentFile.CopyToAsync(fileStream);
+                    }
+                }
+                if (match2.Success)
+                {
+                    comment.FileType = "video";
+                    var storagePath = Path.Combine(
+                    _env.WebRootPath,
+                    "files/videos/",
+                    CommentFile.FileName
+                    );
+
+                    databaseFileName = "/files/videos/" + CommentFile.FileName;
+
+                    using (var fileStream = new FileStream(storagePath, FileMode.Create))
+                    {
+                        await CommentFile.CopyToAsync(fileStream);
+                    }
+                }
+            }
+
+            comment.File = databaseFileName;
+            if (comment.Text != null)
             {
                 comment.UserId = _userManager.GetUserId(User);
                 comment.Date = DateTime.Now;
@@ -318,7 +371,7 @@ namespace TalkFusion.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult Edit(int id, Group requestedGroup)
+        public IActionResult Edit(int id, Models.Group requestedGroup)
         {
             if (User.IsInRole("User"))
             {
@@ -399,7 +452,7 @@ namespace TalkFusion.Controllers
         public IActionResult New()
         {
 
-            var dummyGroup = new Group
+            var dummyGroup = new Models.Group
             {
                 AllCategories = GetAllCategories()
             };
@@ -409,7 +462,7 @@ namespace TalkFusion.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public IActionResult New(Group requestedGroup)
+        public IActionResult New(Models.Group requestedGroup)
         {
             requestedGroup.AllCategories = GetAllCategories();
             if (ModelState.IsValid)

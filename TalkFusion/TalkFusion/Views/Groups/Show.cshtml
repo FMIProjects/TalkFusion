@@ -95,7 +95,21 @@
                         <div class="card-body">
                             <p>@comment.User.NickName</p>
                             <p class="card-title">@comment.Text</p>
+                            @if (comment.File != null)
+                            {
+                                @if (comment.FileType == "image")
+                                {
+                                    <img src="@comment.File" width="320" height="auto">
+                                }
+                                else if (comment.FileType == "video")
+                                {
+                                    <video width="320" height="240" controls>
+                                        <source src="@comment.File" type="video/mp4">
+                                    </video>
+                                }
+                            }
                             <p>@comment.Date</p>
+
                             <!--Edit Comment-->
 
                             <div class="p-2">
@@ -119,7 +133,21 @@
                         <div class="card-body">
                             <p>@comment.User.NickName</p>
                             <p class="card-title">@comment.Text</p>
+                            @if (comment.File != null)
+                            {
+                                @if (comment.FileType == "image")
+                                {
+                                    <img src="@comment.File" width="320" height="auto">
+                                }
+                                else if (comment.FileType == "video")
+                                {
+                                    <video width="320" height="240" controls>
+                                        <source src="@comment.File" type="video/mp4">
+                                    </video>
+                                }
+                            }
                             <p>@comment.Date</p>
+                            
                             @if (ViewBag.ShowButtons)
                             {
                                 <!--Delete Comment-->
@@ -135,13 +163,14 @@
                 }
             }
 
-            <form method="post" asp-controller="Groups" asp-action="AddComment" class="mt-4">
+            <form enctype="multipart/form-data" method="post" asp-controller="Groups" asp-action="AddComment" class="mt-4">
                 <input type="hidden" name="ChannelId" value="@ViewBag.Channel.Id" />
 
                 <label for="comment">Add Comment:</label>
                 <textarea class="form-control" name="Text" rows="4"></textarea>
                 @Html.ValidationMessage("Text", null, new { @class = "text-danger"})
                 <br />
+                <input class="form-control" type="file" name="CommentFile"/>
 
                 <button class="btn btn-dark" type="submit">Send</button>
             </form>
