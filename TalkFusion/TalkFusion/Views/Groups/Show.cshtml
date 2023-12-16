@@ -87,12 +87,13 @@
         @if (ViewBag.Channel != null)
         {
             <!--See Comment-->
-            @foreach (var comment in ViewBag.Channel.Comments)
+            @foreach (var comment in ViewBag.Comments)
             {
                 @if (ViewBag.CurrentUser == comment.UserId)
                 {
                     <div class="card text-white bg-dark mb-3" style="width: 50%;margin-left: auto;">
                         <div class="card-body">
+                            <p>@comment.User.NickName</p>
                             <p class="card-title">@comment.Text</p>
                             <p>@comment.Date</p>
                             <!--Edit Comment-->
@@ -116,6 +117,7 @@
                 {
                     <div class="card text-white bg-dark mb-3" style="width: 50%;margin-right: auto;">
                         <div class="card-body">
+                            <p>@comment.User.NickName</p>
                             <p class="card-title">@comment.Text</p>
                             <p>@comment.Date</p>
                             @if (ViewBag.ShowButtons)

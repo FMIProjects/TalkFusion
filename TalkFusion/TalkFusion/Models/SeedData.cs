@@ -15,18 +15,12 @@ namespace ArticlesApp.Models
             serviceProvider.GetRequiredService
             <DbContextOptions<ApplicationDbContext>>()))
             {
-                // Verificam daca in baza de date exista cel putin un rol
-                // insemnand ca a fost rulat codul
-                // De aceea facem return pentru a nu insera rolurile inca o data
-                // Acesta metoda trebuie sa se execute o singura data
 
                 if (context.Roles.Any())
                 {
-                    return; // baza de date contine deja roluri
+                    return;
                 }
 
-
-                //add roles : admin, moderator, user
                 context.Roles.AddRange(
 
                 new IdentityRole
@@ -35,15 +29,6 @@ namespace ArticlesApp.Models
                     Name = "Admin",
                     NormalizedName = "Admin".ToUpper()
                 },
-
-                
-                new IdentityRole
-                {
-                    Id = "16a0e322-cb98-4b42-9068-f3edfbd55891",
-                    Name = "Moderator",
-                    NormalizedName = "Moderator".ToUpper()
-                },
-
 
                 new IdentityRole
                 {
@@ -66,6 +51,7 @@ namespace ArticlesApp.Models
                     Id = "233dfd41-892a-4cdb-8ffc-17258d6c5770",
                     // primary key
                     UserName = "admin@test.com",
+                    NickName = "Admin",
                     EmailConfirmed = true,
                     NormalizedEmail = "ADMIN@TEST.COM",
                     Email = "admin@test.com",
@@ -75,22 +61,11 @@ namespace ArticlesApp.Models
 
                 new ApplicationUser
                 {
-                    Id = "233dfd41-892a-4cdb-8ffc-17258d6c5771",
-                    // primary key
-                    UserName = "moderator@test.com",
-                    EmailConfirmed = true,
-                    NormalizedEmail = "MODERATOR@TEST.COM",
-                    Email = "moderator@test.com",
-                    NormalizedUserName = "MODERATOR@TEST.COM",
-                    PasswordHash = hasher.HashPassword(null, "Moderator!")
-                },
-
-                new ApplicationUser
-                {
 
                     Id = "233dfd41-892a-4cdb-8ffc-17258d6c5772",
                     // primary key
                     UserName = "user@test.com",
+                    NickName = "User",
                     EmailConfirmed = true,
                     NormalizedEmail = "USER@TEST.COM",
                     Email = "user@test.com",
@@ -107,15 +82,6 @@ namespace ArticlesApp.Models
                     RoleId = "16a0e322-cb98-4b42-9068-f3edfbd55890",
 
                     UserId = "233dfd41-892a-4cdb-8ffc-17258d6c5770"
-                },
-
-                new IdentityUserRole<string>
-
-                {
-
-                    RoleId = "16a0e322-cb98-4b42-9068-f3edfbd55891",
-
-                    UserId = "233dfd41-892a-4cdb-8ffc-17258d6c5771"
                 },
 
                 new IdentityUserRole<string>
