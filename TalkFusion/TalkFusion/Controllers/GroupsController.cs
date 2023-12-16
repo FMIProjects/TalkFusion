@@ -223,6 +223,7 @@ namespace TalkFusion.Controllers
                 var currentChannel = (from chn in db.Channels.Include("Comments")
                                       where chn.Id == channelId
                                       select chn).First();
+               
                 ViewBag.Channel = currentChannel;
             }
             return View(group);
