@@ -37,19 +37,15 @@
 
                         @if (user.UserId != ViewBag.CurrentUser)
                         {
-                            @using (Html.BeginForm(actionName: "KickUser", controllerName: "Users", method: FormMethod.Post, routeValues: new { id = user.Id }))
-                            {
+                            <div> <a class="btn btn-dark" href="/Users/Kick/@user.UserId/@user.GroupId"> Kick </a> </div>
 
-                                <button class="btn btn-danger" type="submit">Kick</button>
-
-                            }
                             @if (@user.IsModerator == false)
                             {
-                                <div> <a class="btn btn-dark" href="/Users/Promote/@user.Id"> Promote </a> </div>
+                                <div> <a class="btn btn-dark" href="/Users/Promote/@user.UserId/@user.GroupId"> Promote </a> </div>
                             }
                             else
                             {
-                                <div> <a class="btn btn-dark" href="/Users/Demote/@user.Id"> Demote </a> </div>
+                                <div> <a class="btn btn-dark" href="/Users/Demote/@user.UserId/@user.GroupId"> Demote </a> </div>
                             }
                         }
                     </div>

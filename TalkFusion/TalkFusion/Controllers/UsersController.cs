@@ -83,7 +83,7 @@ namespace TalkFusion.Controllers
                     db.Comments.Remove(comment);
                 }
             }
-            
+
             db.ApplicationUsers.Remove(user);
 
             db.SaveChanges();
@@ -95,8 +95,22 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin,User")]
         public IActionResult GroupUserIndex(int id)
         {
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
+            }
+
             var users = (from usrgrp in db.UserGroups.Include(c => c.User)
                          where usrgrp.GroupId == id
+                         orderby usrgrp.IsModerator descending
                          select usrgrp);
 
             ViewBag.CurrentUser = _userManager.GetUserId(User);
@@ -105,5 +119,88 @@ namespace TalkFusion.Controllers
             return View();
         }
 
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult Promote(string userId, int groupId)
+        {
+            if (User.IsInRole("User"))
+            {   
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == groupId && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
+            }
+            var currentUser = (from usrgrp in db.UserGroups
+                               where usrgrp.GroupId == groupId && usrgrp.UserId == userId
+                               select usrgrp).First();
+            var newModerator = new UserGroup
+            {
+                UserId = currentUser.UserId,
+                GroupId = currentUser.GroupId,
+                IsModerator = true
+            };
+            db.UserGroups.Remove(currentUser);
+            db.UserGroups.Add(newModerator);
+            db.SaveChanges();
+            return Redirect("/Users/GroupUserIndex/" + groupId);
+        }
+
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult Demote(string userId, int groupId)
+        {
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == groupId && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
+            }
+            var currentUser = (from usrgrp in db.UserGroups
+                               where usrgrp.GroupId == groupId && usrgrp.UserId == userId
+                               select usrgrp).First();
+            var newMember = new UserGroup
+            {
+                UserId = currentUser.UserId,
+                GroupId = currentUser.GroupId,
+                IsModerator = false
+            };
+            db.UserGroups.Remove(currentUser);
+            db.UserGroups.Add(newMember);
+            db.SaveChanges();
+            return Redirect("/Users/GroupUserIndex/" + groupId);
+        }
+
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult Kick(string userId, int groupId)
+        {
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == groupId && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
+            }
+
+            var currentUser = (from usrgrp in db.UserGroups
+                               where usrgrp.GroupId == groupId && usrgrp.UserId == userId
+                               select usrgrp).First();
+            db.UserGroups.Remove(currentUser);
+            db.SaveChanges();
+            return Redirect("/Users/GroupUserIndex/" + groupId);
+        }
     }
 }
