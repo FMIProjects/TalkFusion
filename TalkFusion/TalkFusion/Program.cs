@@ -74,6 +74,24 @@ app.MapControllerRoute(
 );
 
 app.MapControllerRoute(
+    name: "PromoteMember",
+    pattern: "Users/Promote/{userId}/{groupId}",
+    defaults: new { controller = "Users", action = "Promote" }
+);
+
+app.MapControllerRoute(
+    name: "DemoteMember",
+    pattern: "Users/Demote/{userId}/{groupId}",
+    defaults: new { controller = "Users", action = "Demote" }
+);
+
+app.MapControllerRoute(
+    name: "KickMember",
+    pattern: "Users/Kick/{userId}/{groupId}",
+    defaults: new { controller = "Users", action = "Kick" }
+);
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
