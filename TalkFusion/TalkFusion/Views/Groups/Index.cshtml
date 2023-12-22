@@ -7,14 +7,14 @@
 </div>
 
 
-<a href="Groups/New" class="btn btn-success">Add a new Group</a>
+<a href="/Groups/New" class="btn btn-success">Add a new Group</a>
 <br />
 <br />
 
 @if (User.IsInRole("User"))
 {
-    <a href="Groups/ModeratedGroups" class="btn btn-success">Moderated Groups</a>
-    <a href="Groups/UnjoinedGroups" class="btn btn-success">Join a group</a>
+    <a href="/Groups/ModeratedGroups" class="btn btn-success">Moderated Groups</a>
+    <a href="/Groups/UnjoinedGroups" class="btn btn-success">Join a group</a>
     <br />
     <br />
 }
