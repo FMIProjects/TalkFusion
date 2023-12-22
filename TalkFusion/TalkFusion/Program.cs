@@ -38,7 +38,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -49,6 +48,24 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "ModeratedGroups",
+    pattern: "Groups/ModeratedGroups",
+    defaults: new { controller = "Groups", action = "ModeratedGroups" }
+);
+
+app.MapControllerRoute(
+    name: "UnjoinedGroups",
+    pattern: "Groups/UnjoinedGroups",
+    defaults: new { controller = "Groups", action = "UnjoinedGroups" }
+);
+
+app.MapControllerRoute(
+    name: "GroupIndex",
+    pattern: "Groups/Index",
+    defaults: new { controller = "Groups", action = "Index" }
+);
 
 app.MapControllerRoute(
     name: "GroupShow",

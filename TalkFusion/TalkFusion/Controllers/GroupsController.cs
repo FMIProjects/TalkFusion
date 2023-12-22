@@ -275,10 +275,10 @@ namespace TalkFusion.Controllers
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
-        public async Task<IActionResult> AddComment([FromForm] Comment comment, IFormFile CommentFile)
+        public async Task<IActionResult> AddComment([FromForm] Comment comment, IFormFile? CommentFile)
         {
             string? databaseFileName = "";
-            if (CommentFile.Length > 0)
+            if (CommentFile != null && CommentFile.Length > 0)
             {
                 var match1 = Regex.Match(CommentFile.FileName, "\\.(gif|jpe?g|tiff?|png|webp|bmp)$", RegexOptions.IgnoreCase);
                 var match2 = Regex.Match(CommentFile.FileName, "\\.(mp4|mov)$", RegexOptions.IgnoreCase);
@@ -368,7 +368,6 @@ namespace TalkFusion.Controllers
             return View(group);
         }
 
-
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
         public IActionResult Edit(int id, Models.Group requestedGroup)
@@ -413,7 +412,6 @@ namespace TalkFusion.Controllers
             }
 
         }
-
 
         [HttpPost]
         [Authorize(Roles = "User,Admin")]
