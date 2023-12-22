@@ -90,5 +90,20 @@ namespace TalkFusion.Controllers
 
             return RedirectToAction("Index");
         }
+
+        // Group UserPanel
+        [Authorize(Roles = "Admin,User")]
+        public IActionResult GroupUserIndex(int id)
+        {
+            var users = (from usrgrp in db.UserGroups.Include(c => c.User)
+                         where usrgrp.GroupId == id
+                         select usrgrp);
+
+            ViewBag.CurrentUser = _userManager.GetUserId(User);
+            ViewBag.UsersList = users;
+
+            return View();
+        }
+
     }
 }
