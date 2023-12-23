@@ -3,6 +3,7 @@
 <br />
 
 <div class="row">
+    <!--Show each user-->
     @foreach (var user in ViewBag.UsersList)
     {
         <div class="col-4 mb-4">
@@ -24,8 +25,10 @@
                         }
 
                     </div>
+
                     <div class="d-flex flex-row justify-content-between p-3">
 
+                        <!--Delete a user button-->
                         @using (Html.BeginForm(actionName: "Delete", controllerName: "Users", method: FormMethod.Post, routeValues: new { id = user.Id }))
                         {
 

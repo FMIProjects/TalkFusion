@@ -32,6 +32,7 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
+            // get all users besides the admin
             var users = from user in db.Users
                         where user.NickName != "Admin"
                         orderby user.UserName
@@ -47,11 +48,14 @@ namespace TalkFusion.Controllers
         {
             ApplicationUser user = db.Users.Find(id);
 
+            // get all the groups of the user where he is not a moderator
             var joinedGroups = (from grp in db.Groups
                                 join usrgrp in db.UserGroups
                                 on grp.Id equals usrgrp.GroupId
                                 where usrgrp.UserId == user.Id && usrgrp.IsModerator == false
                                 select grp);
+
+            // get all the groups that the user moderates
             var moderatedGroups = (from grp in db.Groups
                                    join usrgrp in db.UserGroups
                                    on grp.Id equals usrgrp.GroupId
@@ -95,24 +99,29 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin,User")]
         public IActionResult GroupUserIndex(int id)
         {
+            // test if the user is a moderator
             if (User.IsInRole("User"))
             {
                 var currentUserId = _userManager.GetUserId(User);
+                // get the specific data from the UserGroup table to get the isModerator value
                 var userGroup = (from usrgrp in db.UserGroups
                                  where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
                                  select usrgrp).First();
 
+                //if the user is not a moderator just deny access
                 if (!(bool)userGroup.IsModerator)
                 {
                     return Redirect("/Groups/Index");
                 }
             }
 
+            // get all users of the current group , the first in order being the moderators
             var users = (from usrgrp in db.UserGroups.Include(c => c.User)
                          where usrgrp.GroupId == id
                          orderby usrgrp.IsModerator descending
                          select usrgrp);
 
+            // needed in order not to show the Kick/Promote/Demote for the current user
             ViewBag.CurrentUser = _userManager.GetUserId(User);
             ViewBag.UsersList = users;
 
@@ -122,6 +131,7 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin,User")]
         public IActionResult Promote(string userId, int groupId)
         {
+            // test for the current user to be a moderator in the current group
             if (User.IsInRole("User"))
             {   
                 var currentUserId = _userManager.GetUserId(User);
@@ -134,17 +144,24 @@ namespace TalkFusion.Controllers
                     return Redirect("/Groups/Index");
                 }
             }
+
+            // select the userGroup that binds the selected user to the current group
             var currentUser = (from usrgrp in db.UserGroups
                                where usrgrp.GroupId == groupId && usrgrp.UserId == userId
                                select usrgrp).First();
+
+            // make a new data entry
             var newModerator = new UserGroup
             {
                 UserId = currentUser.UserId,
                 GroupId = currentUser.GroupId,
                 IsModerator = true
             };
+
+            //remove the old data entry and add the new one
             db.UserGroups.Remove(currentUser);
             db.UserGroups.Add(newModerator);
+
             db.SaveChanges();
             return Redirect("/Users/GroupUserIndex/" + groupId);
         }
@@ -152,6 +169,7 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin,User")]
         public IActionResult Demote(string userId, int groupId)
         {
+            //same logic as promote
             if (User.IsInRole("User"))
             {
                 var currentUserId = _userManager.GetUserId(User);
@@ -182,6 +200,7 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin,User")]
         public IActionResult Kick(string userId, int groupId)
         {
+            // same logic as promote or demote but no new entry is added in UserGroups
             if (User.IsInRole("User"))
             {
                 var currentUserId = _userManager.GetUserId(User);
