@@ -3,6 +3,7 @@
 <br />
 
 <div class="row">
+    <!--Show users of the current group-->
     @foreach (var user in ViewBag.UsersList)
     {
         <div class="col-4 mb-4">
@@ -33,6 +34,7 @@
                         }
 
                     </div>
+                    <!--Kick/Promote/Demote buttons-->
                     <div class="d-flex flex-row justify-content-between p-3">
 
                         @if (user.UserId != ViewBag.CurrentUser)

@@ -25,6 +25,9 @@ namespace TalkFusion.Models
         //users that are part of this group
         public virtual ICollection<UserGroup>? UserGroups { get; set; }
 
+        // join requests to this group
+        public virtual ICollection<JoinRequest>? JoinRequests { get; set; }
+
         //used in New() or Edit()
         [NotMapped]
         public IEnumerable<SelectListItem>? AllCategories { get; set; }

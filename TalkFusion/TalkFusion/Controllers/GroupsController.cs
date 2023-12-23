@@ -116,14 +116,14 @@ namespace TalkFusion.Controllers
                          where grp.Id == id
                          select grp).First();
 
-            // create new UserGroup entity that binds the current user with the selected group
+            // create a new JoinRequest entity that binds the current user with the selected group
             var currentUserId = _userManager.GetUserId(User);
-            var userGroup = new UserGroup { UserId = currentUserId, GroupId = id, IsModerator = false };
+            var joinRequest = new JoinRequest { UserId = currentUserId, GroupId = id };
 
-            db.UserGroups.Add(userGroup);
+            db.JoinRequests.Add(joinRequest);
             db.SaveChanges();
 
-            TempData["message"] = "You have succesfully joined the group named: " + group.Title + " !";
+            TempData["message"] = "You have succesfully requested to join the group named: " + group.Title + " !";
 
             return RedirectToAction("Index");
         }
