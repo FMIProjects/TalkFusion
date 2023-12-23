@@ -72,23 +72,83 @@ namespace TalkFusion.Controllers
         [HttpPost]
         public IActionResult Delete(string id)
         {
-            var user = db.Users
-                .Include(u => u.UserGroups)
-                    .ThenInclude(ug => ug.Group)
-                .Include(u => u.Comments)
-                .Where(u => u.Id == id)
-                .First();
+            var currentUser = db.Users.Find(id);
+
+            if (currentUser == null)
+                return RedirectToAction("Index");
+
+            // select all comments of the user
+            var comments = (from comm in db.Comments
+                            where comm.UserId == id
+                            select comm);
 
             // Delete user comments
-            if (user.Comments.Count > 0)
+            if (comments.Count() > 0)
             {
-                foreach (var comment in user.Comments)
+                foreach (var comment in comments)
                 {
                     db.Comments.Remove(comment);
                 }
             }
 
-            db.ApplicationUsers.Remove(user);
+            // get all the user groups
+            var UserGroups = (from usrgrp in db.UserGroups
+                                       where usrgrp.UserId == id
+                                       select usrgrp);
+
+            foreach(var userGroup in UserGroups)
+            {
+                var currentGroup = (from grp in db.Groups
+                             where grp.Id == userGroup.GroupId
+                             select grp).First();
+
+                var allUsers = (from usrgrp in db.UserGroups
+                                where usrgrp.GroupId == currentGroup.Id
+                                select usrgrp).Count();
+
+                var allModerators = (from usrgrp in db.UserGroups
+                                     where usrgrp.GroupId == currentGroup.Id && usrgrp.IsModerator == true
+                                     select usrgrp).Count();
+
+                // delete the group if the user is moderator and he's the only member
+                if ( (bool)userGroup.IsModerator && allUsers == 1)
+                {
+                    db.UserGroups.Remove(userGroup);
+                    db.Groups.Remove(currentGroup);
+                    //db.SaveChanges();
+                }
+                else
+                {
+                    if ((bool)userGroup.IsModerator && allUsers != 1 && allModerators == 1)
+                    {
+                        // if he's the only moderator make a random member of the group a moderator
+                        db.UserGroups.Remove(userGroup);
+                        db.SaveChanges();
+
+                        var randomUser = (from usrgrp in db.UserGroups
+                                          where usrgrp.GroupId == currentGroup.Id
+                                          select usrgrp).First();
+
+                        var newModerator = new UserGroup
+                        {
+                            UserId = randomUser.UserId,
+                            GroupId = randomUser.GroupId,
+                            IsModerator = true
+                        };
+                        db.UserGroups.Remove(randomUser);
+                        db.UserGroups.Add(newModerator);
+                        //db.SaveChanges();
+                    }
+                    // if there is another moderator still in the group
+                    else
+                    {
+                        db.UserGroups.Remove(userGroup);
+                        //db.SaveChanges();
+                    }
+                }
+            }
+
+            db.ApplicationUsers.Remove(currentUser);
 
             db.SaveChanges();
 
