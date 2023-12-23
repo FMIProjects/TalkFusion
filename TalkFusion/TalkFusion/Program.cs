@@ -92,6 +92,12 @@ app.MapControllerRoute(
 );
 
 app.MapControllerRoute(
+    name: "AcceptMemberRequest",
+    pattern: "Users/AcceptRequest/{userId}/{groupId}",
+    defaults: new { controller = "Users", action = "AcceptRequest" }
+);
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();

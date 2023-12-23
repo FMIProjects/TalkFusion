@@ -1,0 +1,54 @@
+﻿
+<br />
+<br />
+
+<div class="row">
+
+    @if (ViewBag.UsersList == null)
+    {
+        <h2 class="text-center bold">No incoming join requests</h2>
+    }
+    else
+    {
+        <!--Show users of the current group-->
+        @foreach (var user in ViewBag.UsersList)
+        {
+            <div class="col-4 mb-4">
+                <div class="card" style="height:100%; width: 100%;">
+
+                    <div class="card-body d-flex justify-content-between flex-column">
+                        <div>
+
+                            @if (@user.User.NickName != null)
+                            {
+                                <p><i class="bi bi-person"> </i> Nick Name: @user.User.NickName</p>
+                            }
+
+                            <p><i class="bi bi-envelope"></i> Email : @user.User.Email</p>
+
+                            @if (@user.User.PhoneNumber != null)
+                            {
+                                <p><i class="bi bi-phone"></i> Phone Number: @user.User.PhoneNumber</p>
+                            }
+
+
+                        </div>
+                        <!--Kick/Promote/Demote buttons-->
+                        <div class="d-flex flex-row justify-content-between p-3">
+
+                            <div> <a class="btn btn-dark" href="/Users/AcceptRequest/@user.UserId/@user.GroupId"> Accept Request </a> </div>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
+    }
+    
+
+    
+
+</div>
+<br />
+<br />

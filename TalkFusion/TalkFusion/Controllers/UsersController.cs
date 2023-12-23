@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 using TalkFusion.Data;
 using TalkFusion.Models;
 
@@ -155,6 +156,8 @@ namespace TalkFusion.Controllers
             return RedirectToAction("Index");
         }
 
+
+
         // Group UserPanel
         [Authorize(Roles = "Admin,User")]
         public IActionResult GroupUserIndex(int id)
@@ -187,6 +190,8 @@ namespace TalkFusion.Controllers
 
             return View();
         }
+
+
 
         [Authorize(Roles = "Admin,User")]
         public IActionResult Promote(string userId, int groupId)
@@ -280,6 +285,62 @@ namespace TalkFusion.Controllers
             db.UserGroups.Remove(currentUser);
             db.SaveChanges();
             return Redirect("/Users/GroupUserIndex/" + groupId);
+        }
+
+        public IActionResult JoinRequestIndex(int id)
+        {
+
+            // test if the user is a moderator
+            if (User.IsInRole("User"))
+            {
+                var currentUserId = _userManager.GetUserId(User);
+                // get the specific data from the UserGroup table to get the isModerator value
+                var userGroup = (from usrgrp in db.UserGroups
+                                 where usrgrp.GroupId == id && usrgrp.UserId == currentUserId
+                                 select usrgrp).First();
+
+                //if the user is not a moderator just deny access
+                if (!(bool)userGroup.IsModerator)
+                {
+                    return Redirect("/Groups/Index");
+                }
+            }
+
+            // get all users of the current group , the first in order being the moderators
+            var users = (from jrq in db.JoinRequests.Include(c => c.User)
+                         where jrq.GroupId==id
+                         select jrq);
+
+
+            if(users.Any())
+            {
+                ViewBag.UsersList = users;
+            }
+            
+
+            
+
+            return View();
+        }
+
+        public IActionResult AcceptRequest(string userId, int groupId)
+        {
+            var currentJoinRequest = (from jrq in db.JoinRequests
+                                      where jrq.GroupId == groupId && jrq.UserId == userId
+                                      select jrq).First();
+
+            var newUserGroup = new UserGroup
+            {
+                UserId = userId,
+                GroupId = groupId,
+                IsModerator = false
+            };
+
+            db.UserGroups.Add(newUserGroup);
+            db.JoinRequests.Remove(currentJoinRequest);
+            db.SaveChanges();
+
+            return Redirect("/Users/JoinRequestIndex/" + groupId);
         }
     }
 }
