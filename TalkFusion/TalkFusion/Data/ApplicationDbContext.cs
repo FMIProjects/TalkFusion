@@ -23,11 +23,14 @@ namespace TalkFusion.Data
 
         public DbSet<UserGroup> UserGroups { get; set; }
 
+        public DbSet<JoinRequest> JoinRequests { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder
 modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            // definire primary key compus
+            
             modelBuilder.Entity<UserGroup>()
             .HasKey(ab => new {
                 ab.Id,
@@ -36,15 +39,35 @@ modelBuilder)
                 ab.IsModerator
             });
 
-            // definire relatii cu modelele Bookmark si Article (FK)
+            
             modelBuilder.Entity<UserGroup>()
             .HasOne(ab => ab.Group)
             .WithMany(ab => ab.UserGroups)
             .HasForeignKey(ab => ab.GroupId);
+
             modelBuilder.Entity<UserGroup>()
             .HasOne(ab => ab.User)
             .WithMany(ab => ab.UserGroups)
             .HasForeignKey(ab => ab.UserId);
+
+            modelBuilder.Entity<JoinRequest>()
+            .HasKey(jr => new {
+                jr.UserId,
+                jr.GroupId
+            });
+
+            modelBuilder.Entity<JoinRequest>()
+            .HasOne(jr => jr.Group)
+            .WithMany(jr => jr.JoinRequests)
+            .HasForeignKey(jr => jr.GroupId);
+
+            modelBuilder.Entity<JoinRequest>()
+            .HasOne(ab => ab.User)
+            .WithMany(ab => ab.JoinRequests)
+            .HasForeignKey(ab => ab.UserId);
+
+
+
         }
 
 

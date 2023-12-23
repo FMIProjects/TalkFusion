@@ -95,7 +95,7 @@ namespace TalkFusion.Controllers
             var UserGroups = (from usrgrp in db.UserGroups
                                        where usrgrp.UserId == id
                                        select usrgrp);
-
+            
             foreach(var userGroup in UserGroups)
             {
                 var currentGroup = (from grp in db.Groups
