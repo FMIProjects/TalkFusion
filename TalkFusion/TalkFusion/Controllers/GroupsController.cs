@@ -122,6 +122,28 @@ namespace TalkFusion.Controllers
                                   where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
                                   select grp);
 
+            // search engine for moderated groups
+            var search = "";
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the group Ids taht contain the search string
+                List<int> groupsIds = db.Groups.Where(grp => grp.Title.Contains(search)).Select(g => g.Id).ToList();
+
+                // select the groups whose ids are in the list
+
+                unjoinedGroups = (from grp in db.Groups
+                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId) && groupsIds.Contains(grp.Id)
+                                  select grp);
+
+                ViewBag.SearchString = search;
+            }
+
+
             // so that the viewbag will be null in view
             if (unjoinedGroups.Any())
                 ViewBag.UnJoinedGroups = unjoinedGroups;
@@ -141,6 +163,30 @@ namespace TalkFusion.Controllers
                                    on grp.Id equals usrgrp.GroupId
                                    where usrgrp.UserId == currentUserId && usrgrp.IsModerator == true
                                    select grp);
+
+            // search engine for moderated groups
+            var search = "";
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the group Ids taht contain the search string
+                List<int> groupsIds = db.Groups.Where(grp => grp.Title.Contains(search)).Select(g => g.Id).ToList();
+
+                // select the groups whose ids are in the list
+              
+                moderatedGroups = (from grp in db.Groups
+                                   join usrgrp in db.UserGroups
+                                   on grp.Id equals usrgrp.GroupId
+                                   where usrgrp.UserId == currentUserId && usrgrp.IsModerator == true && groupsIds.Contains(grp.Id)
+                                   select grp);
+
+                ViewBag.SearchString = search;
+            }
+
 
             if (moderatedGroups.Any())
                 ViewBag.ModeratedGroups = moderatedGroups;

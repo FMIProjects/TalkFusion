@@ -6,6 +6,23 @@
     <h1 class="text-center">@ViewBag.pageTitle</h1>
 </div>
 
+<!--Search bar-->
+<form method="GET">
+    <div class="input-group mb-3">
+
+        <input type="text" class="form-control"
+               placeholder="Search topics or keywords" name="search"
+               value="@ViewBag.SearchString">
+
+        <button class="btn btn-outline-success"
+                type="submit">
+            Search
+        </button>
+
+    </div>
+</form>
+
+
 <a href="/Groups/UnjoinedGroups" class="btn btn-success">Join a group</a>
 <a href="/Groups/Index" class="btn btn-success">My Groups</a>
 <br />
