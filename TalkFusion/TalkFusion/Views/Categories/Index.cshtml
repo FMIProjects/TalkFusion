@@ -9,6 +9,26 @@
 <br />
 <br />
 
+<!--Search bar-->
+<form method="GET">
+    <div class="input-group mb-3">
+
+        <input type="text" class="form-control"
+               placeholder="Search topics or keywords" name="search"
+               value="@ViewBag.SearchString">
+
+        <button class="btn btn-outline-success"
+                type="submit">
+            Search
+        </button>
+
+    </div>
+</form>
+
+
+<br />
+<br />
+
 @if (ViewBag.Message != null)
 {
     <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>

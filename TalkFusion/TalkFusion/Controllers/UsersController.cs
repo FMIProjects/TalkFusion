@@ -37,6 +37,31 @@ namespace TalkFusion.Controllers
                         orderby user.UserName
                         select user;
 
+            // search engine for users
+            var search = "";
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the group Ids taht contain the search string
+                List<string> usersIds = db.ApplicationUsers.Where(usr => usr.NickName.Contains(search)).Select(usr => usr.Id).ToList();
+
+
+                // select the groups whose ids are in the list
+
+                users = from user in db.Users
+                        where user.NickName != "Admin" && usersIds.Contains(user.Id)
+                        orderby user.UserName
+                        select user;
+
+                ViewBag.SearchString = search;
+            }
+
+
+
             ViewBag.UsersList = users;
 
             return View();
