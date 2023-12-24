@@ -29,6 +29,28 @@ namespace TalkFusion.Controllers
             var categories = from category in db.Categories
                              select category;
 
+            // search engine for categories
+            var search = "";
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the group Ids taht contain the search string
+                List<int> categoriesIds = db.Categories.Where(categ => categ.CategoryName.Contains(search)).Select(categ => categ.Id).ToList();
+
+
+                // select the groups whose ids are in the list
+
+                categories = from category in db.Categories
+                             where categoriesIds.Contains(category.Id)
+                             select category;
+
+                ViewBag.SearchString = search;
+            }
+
             ViewBag.Categories = categories;
 
             if (TempData.ContainsKey("message"))
