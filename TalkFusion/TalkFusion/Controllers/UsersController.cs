@@ -39,6 +39,29 @@ namespace TalkFusion.Controllers
                         orderby user.UserName
                         select user;
 
+            // search engine for users
+            var search = "";
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the group Ids taht contain the search string
+                List<string> usersIds = db.ApplicationUsers.Where(usr => usr.NickName.Contains(search)).Select(usr => usr.Id).ToList();
+
+
+                // select the groups whose ids are in the list
+
+                users = from user in db.Users
+                        where user.NickName != "Admin" && usersIds.Contains(user.Id)
+                        orderby user.UserName
+                        select user;
+
+                ViewBag.SearchString = search;
+            }
+
             ViewBag.UsersList = users;
 
             return View();
@@ -184,6 +207,29 @@ namespace TalkFusion.Controllers
                          orderby usrgrp.IsModerator descending
                          select usrgrp);
 
+            // search engine for users in a group
+            var search = "";
+
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the user Ids that contain the search string
+                List<string> usersIds = db.ApplicationUsers.Where(usr => usr.NickName.Contains(search)).Select(usr => usr.Id).ToList();
+
+
+                // select the groups whose ids are in the list
+
+                users = (from usrgrp in db.UserGroups.Include(c => c.User)
+                         where usrgrp.GroupId == id && usersIds.Contains(usrgrp.UserId)
+                         orderby usrgrp.IsModerator descending
+                         select usrgrp);
+
+                ViewBag.SearchString = search;
+            }
+
             // needed in order not to show the Kick/Promote/Demote for the current user
             ViewBag.CurrentUser = _userManager.GetUserId(User);
             ViewBag.UsersList = users;
@@ -311,8 +357,29 @@ namespace TalkFusion.Controllers
                          where jrq.GroupId==id
                          select jrq);
 
+            // search engine for users requests
+            var search = "";
 
-            if(users.Any())
+            if (Convert.ToString(HttpContext.Request.Query["search"]) != null)
+            {
+
+                // eeliminate space characters
+                search = Convert.ToString(HttpContext.Request.Query["search"]).Trim();
+
+                // select all the user Ids that contain the search string
+                List<string> usersIds = db.ApplicationUsers.Where(usr => usr.NickName.Contains(search)).Select(usr => usr.Id).ToList();
+
+
+                // select the groups whose ids are in the list
+
+                users = (from jrq in db.JoinRequests.Include(c => c.User)
+                         where jrq.GroupId == id && usersIds.Contains(jrq.UserId)
+                         select jrq);
+
+                ViewBag.SearchString = search;
+            }
+
+            if (users.Any())
             {
                 ViewBag.UsersList = users;
             }
