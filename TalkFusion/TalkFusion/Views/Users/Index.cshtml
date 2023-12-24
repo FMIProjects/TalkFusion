@@ -1,6 +1,24 @@
 ﻿
 <br />
 <br />
+<!--Search bar-->
+<form method="GET">
+    <div class="input-group mb-3">
+
+        <input type="text" class="form-control"
+               placeholder="Search topics or keywords" name="search"
+               value="@ViewBag.SearchString">
+
+        <button class="btn btn-outline-success"
+                type="submit">
+            Search
+        </button>
+
+    </div>
+</form>
+
+<br />
+<br />
 
 <div class="row">
     <!--Show each user-->
