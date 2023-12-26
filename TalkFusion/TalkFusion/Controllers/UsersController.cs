@@ -33,6 +33,8 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
+            int _perPage = 6;
+
             // get all users besides the admin
             var users = from user in db.Users
                         where user.NickName != "Admin"
@@ -62,7 +64,21 @@ namespace TalkFusion.Controllers
                 ViewBag.SearchString = search;
             }
 
-            ViewBag.UsersList = users;
+            int totalItems = users.Count();
+
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _perPage;
+            }
+            var paginatedUsers = users.Skip(offset).Take(_perPage);
+
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+
+            ViewBag.UsersList = paginatedUsers;
 
             return View();
         }
@@ -185,6 +201,7 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "Admin,User")]
         public IActionResult GroupUserIndex(int id)
         {
+            int _perPage = 6;
             // test if the user is a moderator
             if (User.IsInRole("User"))
             {
@@ -230,9 +247,23 @@ namespace TalkFusion.Controllers
                 ViewBag.SearchString = search;
             }
 
+            int totalItems = users.Count();
+
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _perPage;
+            }
+            var paginatedUsers = users.Skip(offset).Take(_perPage);
+
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+
             // needed in order not to show the Kick/Promote/Demote for the current user
             ViewBag.CurrentUser = _userManager.GetUserId(User);
-            ViewBag.UsersList = users;
+            ViewBag.UsersList = paginatedUsers;
 
             return View();
         }
@@ -335,6 +366,7 @@ namespace TalkFusion.Controllers
 
         public IActionResult JoinRequestIndex(int id)
         {
+            int _perPage = 6;
 
             // test if the user is a moderator
             if (User.IsInRole("User"))
@@ -379,14 +411,24 @@ namespace TalkFusion.Controllers
                 ViewBag.SearchString = search;
             }
 
-            if (users.Any())
+            int totalItems = users.Count();
+
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            if (!currentPage.Equals(0))
             {
-                ViewBag.UsersList = users;
+                offset = (currentPage - 1) * _perPage;
             }
-            
+            var paginatedUsers = users.Skip(offset).Take(_perPage);
 
-            
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
 
+            if (paginatedUsers.Any())
+            {
+                ViewBag.UsersList = paginatedUsers;
+            }
             return View();
         }
 
