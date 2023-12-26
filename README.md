@@ -14,7 +14,7 @@ Talkfusion is a .NET-based collaborative workplace platform.
 
 # Features
 
-Tasks Completed : 11/13
+Tasks Completed : 13/14
 
 - [X] Implement four types of users: unregistered visitor, registered user, moderator, and administrator.
   
@@ -22,7 +22,9 @@ Tasks Completed : 11/13
   
 - [ ] Home Page.
 
-- [ ] Search Bar.
+- [X] Search Bar.
+  
+- [X] Pagination.
 
 - [X] Each team must have a mandatory name and description upon creation.
   
@@ -51,6 +53,10 @@ Tasks Completed : 11/13
   
    ```bash
     git clone https://github.com/FMIProjects/TalkFusion.git
+   ```
+- Create Database in Package Manager Console:
+   ```bash
+    Update-Database
    ```
 - Run it.
 

@@ -26,6 +26,8 @@ namespace TalkFusion.Controllers
         }
         public IActionResult Index()
         {
+            // 3 categories per page
+            int _perPage = 3;
             var categories = from category in db.Categories
                              select category;
 
@@ -51,7 +53,22 @@ namespace TalkFusion.Controllers
                 ViewBag.SearchString = search;
             }
 
-            ViewBag.Categories = categories;
+            // pagination for categories
+            int totalItems = categories.Count();
+
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _perPage;
+            }
+            var paginatedCategories = categories.Skip(offset).Take(_perPage);
+
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+
+            ViewBag.Categories = paginatedCategories;
 
             if (TempData.ContainsKey("message"))
             {
