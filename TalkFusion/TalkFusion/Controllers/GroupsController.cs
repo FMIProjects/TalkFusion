@@ -35,6 +35,7 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "User,Admin")]
         public IActionResult Index()
         {
+            int _perPage = 3;
             if (User.IsInRole("User"))
             {
                 var currentUserId = _userManager.GetUserId(User);
@@ -67,10 +68,24 @@ namespace TalkFusion.Controllers
 
                     ViewBag.SearchString = search;
                 }
+                // pagination for categories
+                int totalItems = joinedGroups.Count();
+
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+                var offset = 0;
+
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+                var paginatedJoinedGroups = joinedGroups.Skip(offset).Take(_perPage);
+
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
 
                 // so that the item in the viewbag will pe null 
-                if (joinedGroups.Any())
-                    ViewBag.JoinedGroups = joinedGroups;
+                if (paginatedJoinedGroups.Any())
+                    ViewBag.JoinedGroups = paginatedJoinedGroups;
             }
             else
             {
@@ -98,7 +113,21 @@ namespace TalkFusion.Controllers
                     ViewBag.SearchString = search;
                 }
 
-                ViewBag.AllGroups = allGroups;
+                int totalItems = allGroups.Count();
+
+                var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+                var offset = 0;
+
+                if (!currentPage.Equals(0))
+                {
+                    offset = (currentPage - 1) * _perPage;
+                }
+                var paginatedAllGroups = allGroups.Skip(offset).Take(_perPage);
+
+                ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+
+                ViewBag.AllGroups = paginatedAllGroups;
                 ViewBag.JoinedGroups = null;
                 ViewBag.ModeratedGroups = null;
             }
@@ -115,6 +144,8 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "User")]
         public IActionResult UnjoinedGroups()
         {
+            int _perPage = 3;
+
             var currentUserId = _userManager.GetUserId(User);
 
             var unjoinedGroups = (from grp in db.Groups
@@ -141,10 +172,22 @@ namespace TalkFusion.Controllers
 
                 ViewBag.SearchString = search;
             }
+            int totalItems = unjoinedGroups.Count();
 
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _perPage;
+            }
+            var paginatedUnjoinedGroups = unjoinedGroups.Skip(offset).Take(_perPage);
+
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
             // so that the viewbag will be null in view
-            if (unjoinedGroups.Any())
-                ViewBag.UnJoinedGroups = unjoinedGroups;
+            if (paginatedUnjoinedGroups.Any())
+                ViewBag.UnJoinedGroups = paginatedUnjoinedGroups;
 
             return View();
         }
@@ -153,6 +196,8 @@ namespace TalkFusion.Controllers
         [Authorize(Roles = "User")]
         public IActionResult ModeratedGroups()
         {
+            int _perPage = 3;
+
             var currentUserId = _userManager.GetUserId(User);
 
             // select the groups moderated by the current user
@@ -185,9 +230,23 @@ namespace TalkFusion.Controllers
                 ViewBag.SearchString = search;
             }
 
+            int totalItems = moderatedGroups.Count();
 
-            if (moderatedGroups.Any())
-                ViewBag.ModeratedGroups = moderatedGroups;
+            var currentPage = Convert.ToInt32(HttpContext.Request.Query["page"]);
+
+            var offset = 0;
+
+            if (!currentPage.Equals(0))
+            {
+                offset = (currentPage - 1) * _perPage;
+            }
+            var paginatedModeratedGroups = moderatedGroups.Skip(offset).Take(_perPage);
+
+            ViewBag.lastPage = Math.Ceiling((float)totalItems / (float)_perPage);
+
+
+            if (paginatedModeratedGroups.Any())
+                ViewBag.ModeratedGroups = paginatedModeratedGroups;
 
             return View();
         }
