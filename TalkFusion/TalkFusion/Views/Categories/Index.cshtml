@@ -58,5 +58,33 @@
     <br />
     <br />
 }
+<br />
+<br />
+@* Pagination *@
+<div>
+    <nav aria-label="Categories navigation">
+        <ul class="pagination">
+            <li class="page-item">
+                <a class="page-link"
+                   href="/Categories/Index?page=1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (int i = 1; i <= ViewBag.lastPage; i++)
+            {
+                <li class="page-item">
+                    <a class="page-link"
+                       href="/Categories/Index?page=@i">@(i)</a>
+                </li>
+            }
 
+            <li class="page-item">
+                <a class="page-link"
+                   href="/Categories/Index?page=@(ViewBag.lastPage)" arialabel="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</div>
 
