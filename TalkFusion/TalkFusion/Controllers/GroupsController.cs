@@ -149,7 +149,7 @@ namespace TalkFusion.Controllers
             var currentUserId = _userManager.GetUserId(User);
 
             var unjoinedGroups = (from grp in db.Groups
-                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId)
+                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId) && !grp.JoinRequests.Any(userGroup => userGroup.UserId == currentUserId)
                                   select grp);
 
             // search engine for unjoined groups
@@ -167,7 +167,7 @@ namespace TalkFusion.Controllers
                 // select the groups whose ids are in the list
 
                 unjoinedGroups = (from grp in db.Groups
-                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId) && groupsIds.Contains(grp.Id)
+                                  where !grp.UserGroups.Any(userGroup => userGroup.UserId == currentUserId) && groupsIds.Contains(grp.Id) && !grp.JoinRequests.Any(userGroup => userGroup.UserId == currentUserId)
                                   select grp);
 
                 ViewBag.SearchString = search;
