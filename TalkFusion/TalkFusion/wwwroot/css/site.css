@@ -58,9 +58,9 @@ button.nav-link {
         color: #00b894 !important;
     }
 
-    /*
-        Footer Classes
-    */
+/*
+Footer Classes
+*/
 .TF_footer {
     background-color: #FAA307 !important;
     border: none !important;
@@ -104,3 +104,32 @@ button.nav-link {
     grid-area: Comments;
     overflow: auto;
 }
+
+/* General */
+
+.TF_text {
+    color: white;
+}
+
+.TF_container {
+    border-radius: 10px;
+    border: 2px solid solid rgba(255, 255, 255, 0.18);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    padding: 15px;
+}
+
+button.TF_submit_btn {
+    color: #2c2c2c !important;
+    font-weight: bold;
+    background: #F48C06;
+}
+
+
+    button.TF_submit_btn:hover {
+        color: forestgreen !important;
+        font-weight: bold;
+        background: #FFBA08;
+        box-shadow: 10px 10px 70px 0px rgba(3,158,42,1);
+    }
