@@ -1,5 +1,7 @@
 ![TalkFusion](Resources/Logo.png)
 
+[![Code Lines](https://hitsofcode.com/github/fmiprojects/talkfusion?branch=main&label=Code-Lines)](https://hitsofcode.com/github/fmiprojects/talkfusion/view?branch=main&label=Code-Lines)
+
 ## **Table of contents:**
 - [Description](#description)
 - [Features](#features)
