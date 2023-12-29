@@ -2,7 +2,36 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="hero" id="home">
+    <div class="hero_container">
+        <h1 class="hero_heading">
+            Join TalkFusion now and experience
+            the future of collaboration.
+        </h1>
+        <br />
+        <a href="/Identity/Account/Register" class="btn btn-lg TF_submit_btn">Sign Up</a>
+    </div>
+</div>
+<br />
+<h1 class="TF_text text-center">Featured Groups</h1>
+
+<div class="container text-center mt-5 mx-auto d-flex justify-content-center">
+    <div class="row gap-5 px-4">
+        @foreach (var group in ViewBag.PopularGroups)
+        {
+            <div class="col">
+                <div class="card-body text-left">
+                </div>
+                <div class="card border-dark bg-dark text-light" style="width: 18rem;">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">@group.Title</h5>
+                        <hr>
+                        <h6 class="card-subtitle mb-2 text-muted">
+                            <a href="/Identity/Account/Register" type="button" class="btn btn-dark TF_submit_btn">See Group</a>
+                        </h6>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>

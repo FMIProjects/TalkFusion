@@ -14,13 +14,13 @@ Talkfusion is a .NET-based collaborative workplace platform.
 
 # Features
 
-Tasks Completed : 13/14
+Tasks Completed : 14/14
 
 - [X] Implement four types of users: unregistered visitor, registered user, moderator, and administrator.
   
 - [X] Unregistered users can view the home page and login/register forms.
   
-- [ ] Home Page.
+- [X] Home Page.
 
 - [X] Search Bar.
   
