@@ -22,18 +22,18 @@ body {
 Navbar Classes
 */
 .logo {
-    width: 150px;
+    width: 120px;
     height: auto;
 }
 
 .navbar {
-    background-color: #FAA307 !important;
+    background-image: linear-gradient( to right,#7B337D,#210535) !important;
     border: none !important;
-    box-shadow: 0 3px 12px #9D0208 !important;
+    box-shadow: 0 3px 12px #7B337D !important;
 }
 
 a.nav-link {
-    color: #2c2c2c !important;
+    color: white !important;
     font-weight: bold;
 }
 
@@ -42,7 +42,7 @@ a.nav-link {
     }
 
 button.nav-link {
-    color: #2c2c2c !important;
+    color: white !important;
     font-weight: bold;
 }
 
@@ -51,24 +51,24 @@ button.nav-link {
     }
 
 .logoutbtn {
-    color: #2c2c2c !important;
+    color: white !important;
 }
 
     .logoutbtn:hover {
-        color: #00b894 !important;
+        color: #DC2F02 !important;
     }
 
 /*
 Footer Classes
 */
 .TF_footer {
-    background-color: #FAA307 !important;
+    background-image: linear-gradient( to right,#7B337D,#210535) !important;
     border: none !important;
     box-shadow: 0 3px 12px #9D0208 !important;
 }
 
 .TF_footer_content {
-    color: #2c2c2c !important;
+    color: white !important;
     font-weight: bold;
 }
 
@@ -120,16 +120,24 @@ Footer Classes
     padding: 15px;
 }
 
-button.TF_submit_btn {
-    color: #2c2c2c !important;
+.TF_submit_btn {
+    border-color : white;
+    color: white !important;
     font-weight: bold;
-    background: #F48C06;
+    background: #7B337D;
+    border-radius: 10px;
 }
 
 
-    button.TF_submit_btn:hover {
+    .TF_submit_btn:hover {
+        border-color: white;
         color: forestgreen !important;
         font-weight: bold;
-        background: #FFBA08;
-        box-shadow: 10px 10px 50px 0px rgba(3,158,42,1);
+        background: #210535;
+        box-shadow: 0px 0px 20px 0px rgba(3,158,42,1);
+        border-radius: 10px;
     }
+
+.active {
+    background-color: #7B337D !important;
+}
