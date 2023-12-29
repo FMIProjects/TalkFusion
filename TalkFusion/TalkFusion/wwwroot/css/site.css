@@ -105,6 +105,35 @@ Footer Classes
     overflow: auto;
 }
 
+/*Hero Classes*/
+.hero {
+    border-radius: 10px;
+    height: 90vh;
+    background-image: url('/resources/hero.jpg');
+    background-attachment: fixed;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.hero_container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    height: 90%;
+    text-align: center;
+    padding: 30px;
+    max-width: 1200px;
+}
+
+.hero_heading {
+    font-size: 70px;
+    margin-bottom: 25px;
+    color: white;
+}
+
 /* General */
 
 .TF_text {
