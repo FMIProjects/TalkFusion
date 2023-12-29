@@ -29,9 +29,16 @@ namespace TalkFusion.Controllers
             {
                 return RedirectToAction("Index", "Groups");
             }
-            var popularGroups = db.Groups
-                                .Take(3)
-                                .ToList();
+            //var popularGroups = db.Groups.Take(3).ToList();
+            // the the most 3 popular groups
+            var popularGroupsIds = db.UserGroups
+                .GroupBy(usrgrp => usrgrp.GroupId)
+                .OrderByDescending(group => group.Count())
+                .Take(3)
+                .Select( grp=> grp.Key)
+                .ToList();
+
+            var popularGroups = db.Groups.Where(grp => popularGroupsIds.Contains(grp.Id)).ToList().OrderBy(grp=> grp.Id);
             ViewBag.PopularGroups = popularGroups;
             return View();
         }
