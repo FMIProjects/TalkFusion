@@ -8,16 +8,16 @@
 
     <div class="Group">
         <!-- Group Info-->
-        <h3>@Model.Title</h3>
-        <h4>@Model.Category.CategoryName</h4>
+        <h3 class="TF_text">@Model.Title</h3>
+        <h4 class="TF_text">@Model.Category.CategoryName</h4>
 
         <!-- Add Channel Button appears only if the user is moderator-->
         @if (ViewBag.ShowButtons)
         {
-            <button id="toggleButton" onclick="toggleForm()" class="btn btn-dark"><i class="bi bi-plus-circle"></i></button>
-            <a href="/Users/GroupUserIndex/@Model.Id" type="submit" class="btn btn-dark"><i class="bi bi-people-fill"></i></a>
+            <button id="toggleButton" onclick="toggleForm()" class="btn btn-dark TF_submit_btn"><i class="bi bi-plus-circle"></i></button>
+            <a href="/Users/GroupUserIndex/@Model.Id" type="submit" class="btn btn-dark TF_submit_btn"><i class="bi bi-people-fill"></i></a>
 
-            <a href="/Users/JoinRequestIndex/@Model.Id" type="submit" class="btn btn-dark"><i class="bi bi-people"></i></a>
+            <a href="/Users/JoinRequestIndex/@Model.Id" type="submit" class="btn btn-dark TF_submit_btn"><i class="bi bi-people"></i></a>
         }
     </div>
 
