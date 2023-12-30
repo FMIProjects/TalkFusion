@@ -4,7 +4,7 @@
 
 @model TalkFusion.Models.Group
 
-<h1 class="text-center">@ViewBag.pageTitle</h1>
+<h1 class="text-center TF_text">@ViewBag.pageTitle</h1>
 
 <br />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
@@ -12,34 +12,34 @@
 
 <div class="card">
 
-    <div class="card-body">
+    <div class="card-body border-dark bg-dark text-light">
 
         @using (Html.BeginForm(actionName: "Edit",
         controllerName: "Groups",
         method: FormMethod.Post,
         routeValues: new { id = Model.Id }))
         {
-            @Html.Label("Title","Group title")
-            @Html.EditorFor(group=>group.Title, new{htmlAttributes = new{ @class="form-control"}})
+            @Html.Label("Title","Group title",new { @class = "TF_text" })
+            @Html.EditorFor(group=>group.Title, new{htmlAttributes = new{ @class="form-control TF_input_bar"}})
             @Html.ValidationMessage("Title", null, new { @class = "text-danger" })
 
             <br />
 
             <br />
 
-            @Html.Label("Description","Group description")
-            @Html.TextAreaFor(group=>group.Description,new{@class="form-control", value=Model.Description})
+            @Html.Label("Description","Group description", new { @class = "TF_text" })
+            @Html.TextAreaFor(group=>group.Description,new{@class="form-control TF_input_bar", value=Model.Description})
             @Html.ValidationMessage("Description", null, new { @class = "text-danger" })
 
             <br />
 
             <br />
 
-            @Html.Label("Category","Choose group category")
+            @Html.Label("Category","Choose group category", new { @class = "TF_text" })
             @Html.DropDownListFor(m=>m.CategoryId,
             new SelectList(Model.AllCategories, "Value", "Text"),
             "Select Category",
-            new{@class="form-control"}
+        new{@class="form-control TF_input_bar"}
             )
             @Html.ValidationMessageFor(m => m.CategoryId, null, new { @class = "text-danger" })
 
@@ -48,7 +48,7 @@
             <br />
 
             <div class="text-center">
-                <button style="width:30%;" class="btn btn-success" type="submit">Edit group</button>
+                <button style="width:30%;" class="btn btn-dark TF_submit_btn" type="submit">Edit group</button>
             </div>
 
         }
