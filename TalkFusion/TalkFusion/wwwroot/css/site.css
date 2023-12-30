@@ -140,6 +140,11 @@ Footer Classes
 
 /* General */
 
+.TF_input_bar{
+    background-color: black !important;
+    color: white !important;
+}
+
 .TF_text {
     color: white;
 }
@@ -153,7 +158,7 @@ Footer Classes
     padding: 15px;
 }
 
-.TF_submit_btn {
+.TF_submit_btn, .TF_danger_btn {
     border-color : white;
     color: white !important;
     font-weight: bold;
@@ -168,6 +173,15 @@ Footer Classes
         font-weight: bold;
         background: #210535;
         box-shadow: 0px 0px 20px 0px rgba(3,158,42,1);
+        border-radius: 10px;
+    }
+
+    .TF_danger_btn:hover {
+        border-color: white;
+        color: red !important;
+        font-weight: bold;
+        background: #210535;
+        box-shadow: 0px 0px 20px 0px rgba(255, 0, 0, 0.5);
         border-radius: 10px;
     }
 

@@ -1,17 +1,17 @@
 ﻿@model TalkFusion.Models.Category
-<h2>Edit Category</h2>
+<h2 class="TF_text">Edit Category</h2>
 <br />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <br />
 
 @using (Html.BeginForm(actionName: "Edit", controllerName: "Categories", routeValues: new { id = Model.Id }))
 {
-    @Html.Label("CategoryName", "Category Name:")
+    @Html.Label("CategoryName", "Category Name:" , new { @class = "TF_text" })
     <br />
-    @Html.Editor("CategoryName", new { htmlAttributes = new { @class = "form-control" } })
+    @Html.Editor("CategoryName", new { htmlAttributes = new { @class = "form-control TF_input_bar" } })
     @Html.ValidationMessage("CategoryName", null, new { @class = "text-danger" })
     <br />
     <br />
 
-    <button type="submit">Edit category</button>
+    <button type="submit" class="btn btn-dark ml-auto TF_danger_btn">Edit category</button>
 }

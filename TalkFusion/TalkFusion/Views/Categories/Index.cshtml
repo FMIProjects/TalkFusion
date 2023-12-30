@@ -1,104 +1,94 @@
 ﻿@{
-    ViewBag.PageTitle = "Category list";
+ViewBag.PageTitle = "Category list";
 }
 
 
-<div class="hero hero_categ" id="home">
-    <div class="">
-        
 
-        <div class="text-center TF_text">
-            <h1 class="hero_heading">@ViewBag.PageTitle</h1>
-        </div>
+<div class="text-center TF_text">
+    <h1 >@ViewBag.PageTitle</h1>
+</div>
 
-        <br />
-        <br />
-        <!--Search bar-->
-        <form method="GET">
-            <div class="input-group mb-3">
+<br />
+<br />
+<!--Search bar-->
+<form method="GET">
+    <div class="input-group mb-3">
 
-                <input type="text" class="form-control"
-                       placeholder="Search topics or keywords" name="search"
-                       value="@ViewBag.SearchString">
+        <input type="text" class="form-control TF_input_bar"
+                placeholder="Search topics or keywords" name="search"
+                value="@ViewBag.SearchString">
 
-                <button class="btn btn-outline-success"
-                        type="submit">
-                    Search
-                </button>
-
-            </div>
-        </form>
-
-        <br />
-        <br />
-
-        @if (ViewBag.Message != null)
-        {
-            <h2 class="alert-succes p-3 rounded-3 text-center mb-5 TF_text">@ViewBag.Message</h2>
-        }
-
-        <a href="/Categories/New" class="btn btn-dark TF_submit_btn">Add a new category</a>
-
-        <br />
-        <br />
-
-        @foreach (var category in ViewBag.Categories)
-        {
-
-            <div class="card">
-                <div class="card-body border-dark bg-dark text-light">
-
-                    <h3>@category.CategoryName</h3>
-
-                    <br /><br />
-
-                    <div class="d-flex justify-content-between flex-row-reverse">
-
-                        <a href="/Categories/Show/@category.Id" class="btn btn-dark ml-auto TF_submit_btn">See category</a>
-
-                    </div>
-                </div>
-            </div>
-
-            <br />
-            <br />
-        }
-        <br />
-        <br />
-        @* Pagination *@
-        <div>
-            <nav aria-label="Categories navigation">
-                <ul class="pagination">
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="/Categories/Index?page=1" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    @for (int i = 1; i <= ViewBag.lastPage; i++)
-                    {
-                        <li class="page-item">
-                            <a class="page-link"
-                               href="/Categories/Index?page=@i">@(i)</a>
-                        </li>
-                    }
-
-                    <li class="page-item">
-                        <a class="page-link"
-                           href="/Categories/Index?page=@(ViewBag.lastPage)" arialabel="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-
-
-
-
-
-
+        <button class="btn btn-outline-success TF_submit_btn"
+                type="submit">
+            Search
+        </button>
 
     </div>
+</form>
+
+<br />
+<br />
+
+@if (ViewBag.Message != null)
+{
+    <h2 class="alert-succes p-3 rounded-3 text-center mb-5 TF_text">@ViewBag.Message</h2>
+}
+
+<a href="/Categories/New" class="btn btn-dark TF_submit_btn">Add a new category</a>
+
+<br />
+<br />
+
+@foreach (var category in ViewBag.Categories)
+{
+
+    <div class="card">
+        <div class="card-body border-dark bg-dark text-light">
+
+            <h3 class="text-center">@category.CategoryName</h3>
+
+            <br /><br />
+
+            <div class="d-flex justify-content-between flex-row-reverse">
+
+                <a href="/Categories/Show/@category.Id" class="btn btn-dark ml-auto TF_submit_btn">See category</a>
+
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <br />
+}
+<br />
+<br />
+@* Pagination *@
+<div>
+    <nav aria-label="Categories navigation">
+        <ul class="pagination">
+            <li class="page-item ">
+                <a class="page-link TF_submit_btn"
+                    href="/Categories/Index?page=1" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+            @for (int i = 1; i <= ViewBag.lastPage; i++)
+            {
+                <li class="page-item ">
+                    <a class="page-link TF_submit_btn"
+                        href="/Categories/Index?page=@i">@(i)</a>
+                </li>
+            }
+
+            <li class="page-item ">
+                <a class="page-link TF_submit_btn"
+                    href="/Categories/Index?page=@(ViewBag.lastPage)" arialabel="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 </div>
+
+
 
