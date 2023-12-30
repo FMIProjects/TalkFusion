@@ -4,7 +4,7 @@
 
 @model TalkFusion.Models.Channel
 
-<h1 class="text-center">@ViewBag.pageTitle</h1>
+<h1 class="text-center TF_text">@ViewBag.pageTitle</h1>
 
 <br />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
@@ -12,30 +12,30 @@
 
 <div class="card">
 
-    <div class="card-body">
+    <div class="card-body border-dark bg-dark text-light">
 
         @using (Html.BeginForm(actionName: "Edit",
         controllerName: "Channels",
         method: FormMethod.Post,
         routeValues: new { id = Model.Id }))
         {
-            @Html.Label("Title","Channel title")
-            @Html.EditorFor(channel=>channel.Title, new{htmlAttributes = new{ @class="form-control"}})
+            @Html.Label("Title","Channel title", new { @class = "TF_text" })
+            @Html.EditorFor(channel=>channel.Title, new{htmlAttributes = new{ @class="form-control TF_input_bar"}})
             @Html.ValidationMessage("Title", null, new { @class = "text-danger" })
 
             <br />
 
             <br />
 
-            @Html.Label("Description","Channel description")
-            @Html.TextAreaFor(channel=>channel.Description,new{@class="form-control", value=Model.Description})
+            @Html.Label("Description","Channel description", new { @class = "TF_text" })
+            @Html.TextAreaFor(channel=>channel.Description,new{@class="form-control TF_input_bar", value=Model.Description})
             @Html.ValidationMessage("Description", null, new { @class = "text-danger" })
 
             <br />
             <br />
 
             <div class="text-center">
-                <button style="width:30%;" class="btn btn-success" type="submit">Edit channel</button>
+                <button style="width:30%;" class="btn btn-dark TF_submit_btn" type="submit">Edit channel</button>
             </div>
 
         }
