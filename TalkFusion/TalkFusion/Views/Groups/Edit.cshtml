@@ -39,7 +39,7 @@
             @Html.DropDownListFor(m=>m.CategoryId,
             new SelectList(Model.AllCategories, "Value", "Text"),
             "Select Category",
-        new{@class="form-control TF_input_bar"}
+            new{@class="form-control TF_input_bar"}
             )
             @Html.ValidationMessageFor(m => m.CategoryId, null, new { @class = "text-danger" })
 
