@@ -3,7 +3,7 @@
 @{
     ViewBag.Title = "Add a new Category";
 }
-<div class="text-center">
+<div class="text-center TF_text">
     <h1>@ViewBag.Title</h1>
 </div>
 
@@ -12,23 +12,23 @@
 <br />
 
 <div class="card">
-    <div class="card-body">
+    <div class="card-body border-dark bg-dark text-light">
 
         @using (Html.BeginForm(actionName: "New",
         controllerName: "Categories",
         method: FormMethod.Post))
         {
-            @Html.Label("CategoryName","Category Name:")
+            @Html.Label("CategoryName","Category Name:",new { @class = "TF_text" })
 
             <br />
 
-            @Html.TextBox("CategoryName",null,new {@class="form-control"})
+            @Html.TextBox("CategoryName",null,new {@class="form-control TF_input_bar"})
             @Html.ValidationMessage("CategoryName", null, new { @class = "text-danger" })
             <br />
             <br />
 
             <div class="text-center">
-                <button style="width:30%;" class="btn btn-success" type="submit">Add new category</button>
+                <button style="width:30%;" class="btn btn-dark TF_submit_btn" type="submit">Add new category</button>
             </div>
 
             <br />

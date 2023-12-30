@@ -1,9 +1,11 @@
 ﻿@{
-    ViewBag.PageTitle = "Category list";
+ViewBag.PageTitle = "Category list";
 }
 
-<div class="text-center">
-    <h1>@ViewBag.PageTitle</h1>
+
+
+<div class="text-center TF_text">
+    <h1 >@ViewBag.PageTitle</h1>
 </div>
 
 <br />
@@ -12,11 +14,11 @@
 <form method="GET">
     <div class="input-group mb-3">
 
-        <input type="text" class="form-control"
-               placeholder="Search topics or keywords" name="search"
-               value="@ViewBag.SearchString">
+        <input type="text" class="form-control TF_input_bar"
+                placeholder="Search topics or keywords" name="search"
+                value="@ViewBag.SearchString">
 
-        <button class="btn btn-outline-success"
+        <button class="btn btn-outline-success TF_submit_btn"
                 type="submit">
             Search
         </button>
@@ -29,10 +31,10 @@
 
 @if (ViewBag.Message != null)
 {
-    <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+    <h2 class="alert-succes p-3 rounded-3 text-center mb-5 TF_text">@ViewBag.Message</h2>
 }
 
-<a href="/Categories/New" class="btn btn-success">Add a new category</a>
+<a href="/Categories/New" class="btn btn-dark TF_submit_btn">Add a new category</a>
 
 <br />
 <br />
@@ -41,15 +43,15 @@
 {
 
     <div class="card">
-        <div class="card-body">
+        <div class="card-body border-dark bg-dark text-light">
 
-            <h3>@category.CategoryName</h3>
+            <h3 class="text-center">@category.CategoryName</h3>
 
             <br /><br />
 
             <div class="d-flex justify-content-between flex-row-reverse">
 
-                <a href="/Categories/Show/@category.Id" class="btn btn-success ml-auto">See category</a>
+                <a href="/Categories/Show/@category.Id" class="btn btn-dark ml-auto TF_submit_btn">See category</a>
 
             </div>
         </div>
@@ -64,27 +66,29 @@
 <div>
     <nav aria-label="Categories navigation">
         <ul class="pagination">
-            <li class="page-item">
-                <a class="page-link"
-                   href="/Categories/Index?page=1" aria-label="Previous">
+            <li class="page-item ">
+                <a class="page-link TF_submit_btn"
+                    href="/Categories/Index?page=1" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
             @for (int i = 1; i <= ViewBag.lastPage; i++)
             {
-                <li class="page-item">
-                    <a class="page-link"
-                       href="/Categories/Index?page=@i">@(i)</a>
+                <li class="page-item ">
+                    <a class="page-link TF_submit_btn"
+                        href="/Categories/Index?page=@i">@(i)</a>
                 </li>
             }
 
-            <li class="page-item">
-                <a class="page-link"
-                   href="/Categories/Index?page=@(ViewBag.lastPage)" arialabel="Next">
+            <li class="page-item ">
+                <a class="page-link TF_submit_btn"
+                    href="/Categories/Index?page=@(ViewBag.lastPage)" arialabel="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
             </li>
         </ul>
     </nav>
 </div>
+
+
 

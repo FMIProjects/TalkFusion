@@ -4,7 +4,7 @@
     ViewBag.Title = "Category show";
 }
 
-<div class="text-center">
+<div class="text-center TF_text">
     <h1>@ViewBag.Title</h1>
 </div>
 
@@ -12,13 +12,13 @@
 
 @if (ViewBag.Message != null)
 {
-    <h2 class="alert-succes p-3 rounded-3 text-center mb-5">@ViewBag.Message</h2>
+    <h2 class="alert-succes p-3 rounded-3 text-center mb-5 TF_text">@ViewBag.Message</h2>
 }
 
 <br />
 <div class="card">
 
-    <div class="card-body">
+    <div class="card-body border-dark bg-dark text-light">
 
         <h3>@Model.CategoryName</h3>
         <br />
@@ -27,7 +27,7 @@
         <div class="d-flex flex-end justify-content-between ">
 
             <!--edit-->
-            <a href="/Categories/Edit/@Model.Id" class="btn btn-success mb-2" type="submit">Edit Category</a>
+            <a href="/Categories/Edit/@Model.Id" class="btn btn-dark ml-auto TF_submit_btn mb-2" type="submit">Edit Category</a>
 
             <!--delete form-->
             @using (Html.BeginForm(actionName: "Delete",
@@ -35,7 +35,7 @@
             method: FormMethod.Post,
             routeValues: new { id = Model.Id }))
             {
-                <button class="btn btn-danger" type="submit">Delete Category</button>
+                <button class="btn btn-dark ml-auto TF_danger_btn" type="submit">Delete Category</button>
             }
 
         </div>
@@ -46,7 +46,7 @@
 <br />
 
 <!-- show groups with this category label-->
-<h2>Groups that are part of this category</h2>
+<h2 class="TF_text">Groups that are part of this category</h2>
 
 <br />
 <br />
@@ -57,12 +57,12 @@
     {
 
         <div class="card">
-            <div class="card-body">
+            <div class="card-body border-dark bg-dark text-light">
 
-                <h2>@group.Title</h2>
+                <h2 class="TF_text">@group.Title</h2>
                 <br />
 
-                <p>@group.Description</p>
+                <p class="TF_text">@group.Description</p>
 
                 <br />
             </div>
