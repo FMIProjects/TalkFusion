@@ -25,12 +25,12 @@
         <!-- Channel Info-->
         @if (ViewBag.Channel != null)
         {
-            <h3>@ViewBag.Channel.Title</h3>
-            <h4>@ViewBag.Channel.Description</h4>
+            <h3 class="TF_text">@ViewBag.Channel.Title</h3>
+            <h4 class="TF_text">@ViewBag.Channel.Description</h4>
         }
         else
         {
-            <h3>Choose a Channel</h3>
+            <h3 class="TF_text">Choose a Channel</h3>
         }
     </div>
 
@@ -39,22 +39,22 @@
         <!-- Form New Channel -->
         <form method="post" action="/Groups/Show" id="toggle" style="display:none;">
 
-            <div class="card-body">
+            <div class="card-body border-dark bg-dark text-light ">
 
                 <input type="hidden" name="GroupId" value="@Model.Id" />
 
-                <label>Channel Name:</label>
+                <label class="TF_text">Channel Name:</label>
                 <br />
-                <textarea class="form-control" name="Title"></textarea>
+                <textarea class="form-control TF_input_bar" name="Title"></textarea>
                 @Html.ValidationMessage("Title", null, new { @class = "text-danger"})
                 <br />
 
-                <label>Channel Description:</label>
+                <label class="TF_text">Channel Description:</label>
                 <br />
-                <textarea class="form-control" name="Description"></textarea>
+                <textarea class="form-control TF_input_bar" name="Description"></textarea>
                 @Html.ValidationMessage("Description", null, new { @class = "text-danger"})
                 <br />
-                <button class="btn btn-dark " type="submit">Add Channel</button>
+                <button class="btn btn-dark TF_submit_btn " type="submit">Add Channel</button>
             </div>
         </form>
 
@@ -65,19 +65,19 @@
 
                 <!--See Channel-->
                 <div class="mr-auto p-2">
-                    <a class="btn btn-dark btn-lg active" href="/Groups/Show/@Model.Id/@channel.Id">@channel.Title</a>
+                    <a class="btn btn-dark btn-lg active TF_submit_btn" href="/Groups/Show/@Model.Id/@channel.Id">@channel.Title</a>
                 </div>
 
                 @if (ViewBag.ShowButtons)
                 {
                     <!--Edit Channel-->
                     <div class="p-2">
-                        <a href="/Channels/Edit/@channel.Id" type="button" class="btn btn-dark"><i class="bi bi-pencil-square"></i></a>
+                        <a href="/Channels/Edit/@channel.Id" type="button" class="btn btn-dark TF_submit_btn"><i class="bi bi-pencil-square"></i></a>
                     </div>
 
                     <!--Delete Channel-->
                     <form method="post" action="/Channels/Delete/@channel.Id" class="p-2">
-                        <button type="submit" class="btn btn-danger">
+                        <button type="submit" class="btn btn-danger TF_danger_btn">
                             <i class="bi bi-trash3"></i>
                         </button>
                     </form>
@@ -150,7 +150,7 @@
                                 }
                             }
                             <p>@comment.Date</p>
-                            
+
                             @if (ViewBag.ShowButtons)
                             {
                                 <!--Delete Comment-->
@@ -173,7 +173,7 @@
                 <textarea class="form-control" name="Text" rows="4"></textarea>
                 @Html.ValidationMessage("Text", null, new { @class = "text-danger"})
                 <br />
-                <input class="form-control" type="file" name="CommentFile"/>
+                <input class="form-control" type="file" name="CommentFile" />
 
                 <button class="btn btn-dark" type="submit">Send</button>
             </form>
