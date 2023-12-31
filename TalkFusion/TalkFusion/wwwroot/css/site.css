@@ -90,14 +90,21 @@ Footer Classes
 .Channels {
     grid-area: Channels;
     overflow: auto;
+    border-radius: 10px;
+    border: 2px solid solid rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    padding: 15px;
 }
 
 .Group {
     grid-area: Group;
+    width : 100% !important;
 }
 
 .Channel {
     grid-area: Channel;
+    width: 100% !important;
 }
 
 .Comments {
@@ -156,6 +163,7 @@ Footer Classes
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     padding: 15px;
+    width: 50%;
 }
 
 .TF_submit_btn, .TF_danger_btn {

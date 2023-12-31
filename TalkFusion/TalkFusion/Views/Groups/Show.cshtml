@@ -3,10 +3,12 @@
 }
 
 @model TalkFusion.Models.Group
+<br />
+<br />
 
 <div class="container-show-group">
 
-    <div class="Group">
+    <div class="Group TF_container">
         <!-- Group Info-->
         <h3 class="TF_text">@Model.Title</h3>
         <h4 class="TF_text">@Model.Category.CategoryName</h4>
@@ -21,7 +23,7 @@
         }
     </div>
 
-    <div class="Channel">
+    <div class="Channel TF_container">
         <!-- Channel Info-->
         @if (ViewBag.Channel != null)
         {
@@ -35,28 +37,29 @@
     </div>
 
     <div class="Channels" style="overflow-y: auto;">
-        <br />
         <!-- Form New Channel -->
-        <form method="post" action="/Groups/Show" id="toggle" style="display:none;">
+        <div class="container text-center mt-5">
+            <div class="d-flex justify-content-center flex-column">
+                <form method="post" action="/Groups/Show" id="toggle" style="display:none;width:100% !important;padding-top:0 !important;" class="TF_container">
 
-            <div class="card-body border-dark bg-dark text-light ">
 
-                <input type="hidden" name="GroupId" value="@Model.Id" />
+                        <input type="hidden" name="GroupId" value="@Model.Id" />
 
-                <label class="TF_text">Channel Name:</label>
-                <br />
-                <textarea class="form-control TF_input_bar" name="Title"></textarea>
-                @Html.ValidationMessage("Title", null, new { @class = "text-danger"})
-                <br />
+                        <label class="TF_text">Channel Name:</label>
+                        <br />
+                        <textarea class="form-control TF_input_bar" name="Title"></textarea>
+                        @Html.ValidationMessage("Title", null, new { @class = "text-danger"})
+                        <br />
 
-                <label class="TF_text">Channel Description:</label>
-                <br />
-                <textarea class="form-control TF_input_bar" name="Description"></textarea>
-                @Html.ValidationMessage("Description", null, new { @class = "text-danger"})
-                <br />
-                <button class="btn btn-dark TF_submit_btn " type="submit">Add Channel</button>
+                        <label class="TF_text">Channel Description:</label>
+                        <br />
+                        <textarea class="form-control TF_input_bar" name="Description"></textarea>
+                        @Html.ValidationMessage("Description", null, new { @class = "text-danger"})
+                        <br />
+                        <button class="btn btn-dark TF_submit_btn " type="submit">Add Channel</button>
+                </form>
             </div>
-        </form>
+        </div>
 
         <!--Channel List-->
         @foreach (var channel in Model.Channels)
@@ -94,7 +97,7 @@
             {
                 @if (ViewBag.CurrentUser == comment.UserId)
                 {
-                    <div class="card text-white bg-dark mb-3" style="width: 50%;margin-left: auto;">
+                    <div class="card text-white mb-3 TF_container" style="width: 50%;margin-left: auto;">
                         <div class="card-body">
                             <p>@comment.User.NickName</p>
                             <p class="card-title">@comment.Text</p>
@@ -102,7 +105,7 @@
                             {
                                 @if (comment.FileType == "image")
                                 {
-                                    <img src="@comment.File" width="320" height="auto">
+                                    <img src="@comment.File" width="320" height="auto" onclick="this.requestFullscreen()">
                                 }
                                 else if (comment.FileType == "video")
                                 {
@@ -113,26 +116,28 @@
                             }
                             <p>@comment.Date</p>
 
+                            <div class="d-flex align-items-center mb-2">
+
                             <!--Edit Comment-->
 
-                            <div class="p-2">
-                                <a href="/Comments/Edit/@comment.Id" type="button" class="btn btn-light"><i class="bi bi-pencil-square"></i></a>
+                            <div class="p-2 mr-auto">
+                                <a href="/Comments/Edit/@comment.Id" type="button" class="btn TF_submit_btn"><i class="bi bi-pencil-square"></i></a>
                             </div>
 
                             <!--Delete Comment-->
 
                             <form method="post" action="/Comments/Delete/@comment.Id" class="p-2">
-                                <button type="submit" class="btn btn-danger">
+                                <button type="submit" class="btn TF_danger_btn">
                                     <i class="bi bi-trash3"></i>
                                 </button>
                             </form>
-
+                                </div>
                         </div>
                     </div>
                 }
                 else
                 {
-                    <div class="card text-white bg-dark mb-3" style="width: 50%;margin-right: auto;">
+                    <div class="card text-white mb-3 TF_container" style="width: 50%;margin-right: auto;">
                         <div class="card-body">
                             <p>@comment.User.NickName</p>
                             <p class="card-title">@comment.Text</p>
@@ -140,7 +145,7 @@
                             {
                                 @if (comment.FileType == "image")
                                 {
-                                    <img src="@comment.File" width="320" height="auto">
+                                    <img src="@comment.File" width="320" height="auto" onclick="this.requestFullscreen()">
                                 }
                                 else if (comment.FileType == "video")
                                 {
@@ -156,7 +161,7 @@
                                 <!--Delete Comment-->
 
                                 <form method="post" action="/Comments/Delete/@comment.Id" class="p-2">
-                                    <button type="submit" class="btn btn-danger">
+                                    <button type="submit" class="btn TF_danger_btn">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </form>
@@ -169,13 +174,15 @@
             <form enctype="multipart/form-data" method="post" asp-controller="Groups" asp-action="AddComment" class="mt-4">
                 <input type="hidden" name="ChannelId" value="@ViewBag.Channel.Id" />
 
-                <label for="comment">Add Comment:</label>
-                <textarea class="form-control" name="Text" rows="4"></textarea>
+                <label for="comment" class="TF_text">Add Comment:</label>
+                <textarea class="form-control TF_input_bar" name="Text" rows="4"></textarea>
                 @Html.ValidationMessage("Text", null, new { @class = "text-danger"})
                 <br />
-                <input class="form-control" type="file" name="CommentFile" />
+                <input class="form-control TF_input_bar" type="file" name="CommentFile" />
+                <br />
 
-                <button class="btn btn-dark" type="submit">Send</button>
+                <button class="btn TF_submit_btn" type="submit">Send</button>
+                <br />
             </form>
         }
     </div>

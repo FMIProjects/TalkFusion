@@ -10,15 +10,15 @@
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <br />
 
-<div class="card">
-
-    <div class="card-body border-dark bg-dark text-light">
+<div class="container text-center mt-5">
+    <div class="d-flex justify-content-center flex-column">
 
         @using (Html.BeginForm(actionName: "Edit",
         controllerName: "Channels",
         method: FormMethod.Post,
-        routeValues: new { id = Model.Id }))
+        new { @class = "TF_container mx-auto" }))
         {
+            @Html.HiddenFor(model => model.Id)
             @Html.Label("Title","Channel title", new { @class = "TF_text" })
             @Html.EditorFor(channel=>channel.Title, new{htmlAttributes = new{ @class="form-control TF_input_bar"}})
             @Html.ValidationMessage("Title", null, new { @class = "text-danger" })

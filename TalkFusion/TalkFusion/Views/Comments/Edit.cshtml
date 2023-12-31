@@ -4,22 +4,24 @@
 
 @model TalkFusion.Models.Comment
 
-<h1 class="text-center">@ViewBag.pageTitle</h1>
+<h1 class="text-center TF_text">@ViewBag.pageTitle</h1>
 
 <br />
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <br />
 
-<div class="card">
-
-    <div class="card-body">
+<div class="container text-center mt-5">
+    <div class="d-flex justify-content-center flex-column">
 
         @using (Html.BeginForm(actionName: "Edit",
         controllerName: "Comments",
         method: FormMethod.Post,
-        routeValues: new { id = Model.Id }))
+        new { @class = "TF_container mx-auto" }))
         {
-            @Html.Label("Text","Comment text")
+            @Html.HiddenFor(model => model.Id)
+            @Html.Label("Text","Comment: ", new { @class = "TF_text" })
+            <br />
+            <br />
             @Html.EditorFor(comment=>comment.Text, new{htmlAttributes = new{ @class="form-control"}})
             @Html.ValidationMessage("Text", null, new { @class = "text-danger" })
 
@@ -27,7 +29,7 @@
             <br />
 
             <div class="text-center">
-                <button style="width:30%;" class="btn btn-success" type="submit">Edit comment</button>
+                <button style="width:30%;" class="btn TF_submit_btn" type="submit">Edit comment</button>
             </div>
 
         }
