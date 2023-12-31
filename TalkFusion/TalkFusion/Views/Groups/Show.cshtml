@@ -35,28 +35,29 @@
     </div>
 
     <div class="Channels" style="overflow-y: auto;">
-        <br />
         <!-- Form New Channel -->
-        <form method="post" action="/Groups/Show" id="toggle" style="display:none;">
+        <div class="container text-center mt-5">
+            <div class="d-flex justify-content-center flex-column">
+                <form method="post" action="/Groups/Show" id="toggle" style="display:none;width:100% !important;padding-top:0 !important;" class="TF_container">
 
-            <div class="card-body border-dark bg-dark text-light ">
 
-                <input type="hidden" name="GroupId" value="@Model.Id" />
+                        <input type="hidden" name="GroupId" value="@Model.Id" />
 
-                <label class="TF_text">Channel Name:</label>
-                <br />
-                <textarea class="form-control TF_input_bar" name="Title"></textarea>
-                @Html.ValidationMessage("Title", null, new { @class = "text-danger"})
-                <br />
+                        <label class="TF_text">Channel Name:</label>
+                        <br />
+                        <textarea class="form-control TF_input_bar" name="Title"></textarea>
+                        @Html.ValidationMessage("Title", null, new { @class = "text-danger"})
+                        <br />
 
-                <label class="TF_text">Channel Description:</label>
-                <br />
-                <textarea class="form-control TF_input_bar" name="Description"></textarea>
-                @Html.ValidationMessage("Description", null, new { @class = "text-danger"})
-                <br />
-                <button class="btn btn-dark TF_submit_btn " type="submit">Add Channel</button>
+                        <label class="TF_text">Channel Description:</label>
+                        <br />
+                        <textarea class="form-control TF_input_bar" name="Description"></textarea>
+                        @Html.ValidationMessage("Description", null, new { @class = "text-danger"})
+                        <br />
+                        <button class="btn btn-dark TF_submit_btn " type="submit">Add Channel</button>
+                </form>
             </div>
-        </form>
+        </div>
 
         <!--Channel List-->
         @foreach (var channel in Model.Channels)

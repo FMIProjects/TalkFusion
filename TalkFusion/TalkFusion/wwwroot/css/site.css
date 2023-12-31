@@ -156,6 +156,7 @@ Footer Classes
     backdrop-filter: blur(10px);
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     padding: 15px;
+    width: 50%;
 }
 
 .TF_submit_btn, .TF_danger_btn {

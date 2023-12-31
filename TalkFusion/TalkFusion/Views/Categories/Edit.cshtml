@@ -4,14 +4,20 @@
 @Html.ValidationSummary(false, "", new { @class = "text-danger" })
 <br />
 
-@using (Html.BeginForm(actionName: "Edit", controllerName: "Categories", routeValues: new { id = Model.Id }))
-{
-    @Html.Label("CategoryName", "Category Name:" , new { @class = "TF_text" })
-    <br />
-    @Html.Editor("CategoryName", new { htmlAttributes = new { @class = "form-control TF_input_bar" } })
-    @Html.ValidationMessage("CategoryName", null, new { @class = "text-danger" })
-    <br />
-    <br />
+<div class="container text-center mt-5">
+    <div class="d-flex justify-content-center flex-column">
+        @using (Html.BeginForm(actionName: "Edit", controllerName: "Categories", method: FormMethod.Post, new { @class = "TF_container mx-auto" }))
+        {
+            @Html.HiddenFor(model => model.Id)
+            @Html.Label("CategoryName", "Category Name:" , new { @class = "TF_text" })
+            <br />
+            <br />
+            @Html.Editor("CategoryName", new { htmlAttributes = new { @class = "form-control TF_input_bar" } })
+            @Html.ValidationMessage("CategoryName", null, new { @class = "text-danger" })
+            <br />
+            <br />
 
-    <button type="submit" class="btn btn-dark ml-auto TF_danger_btn">Edit category</button>
-}
+            <button type="submit" class="btn btn-dark ml-auto TF_submit_btn">Edit category</button>
+        }
+    </div>
+</div>
