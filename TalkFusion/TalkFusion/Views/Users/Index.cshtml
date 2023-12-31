@@ -5,11 +5,11 @@
 <form method="GET">
     <div class="input-group mb-3">
 
-        <input type="text" class="form-control"
+        <input type="text" class="form-control TF_input_bar"
                placeholder="Search topics or keywords" name="search"
                value="@ViewBag.SearchString">
 
-        <button class="btn btn-outline-success"
+        <button class="btn btn-dark TF_submit_btn"
                 type="submit">
             Search
         </button>
@@ -25,21 +25,21 @@
     @foreach (var user in ViewBag.UsersList)
     {
         <div class="col-4 mb-4">
-            <div class="card" style="height:100%; width: 100%;">
+            <div class="card TF_container" style="height:100%; width: 100%;">
 
                 <div class="card-body d-flex justify-content-between flex-column">
                     <div>
 
                         @if (@user.NickName != null)
                         {
-                            <p><i class="bi bi-person"> </i> Nick Name: @user.NickName</p>
+                            <p class="TF_text"><i class="bi bi-person"> </i> Nick Name: @user.NickName</p>
                         }
 
-                        <p><i class="bi bi-envelope"></i> Email : @user.Email</p>
+                        <p class="TF_text"><i class="bi bi-envelope"></i> Email : @user.Email</p>
 
                         @if (@user.PhoneNumber != null)
                         {
-                            <p><i class="bi bi-phone"></i> Phone Number: @user.PhoneNumber</p>
+                            <p class="TF_text"><i class="bi bi-phone"></i> Phone Number: @user.PhoneNumber</p>
                         }
 
                     </div>
@@ -50,11 +50,11 @@
                         @using (Html.BeginForm(actionName: "Delete", controllerName: "Users", method: FormMethod.Post, routeValues: new { id = user.Id }))
                         {
 
-                            <button class="btn btn-danger" type="submit">Delete</button>
+                            <button class="btn TF_danger_btn" type="submit">Delete</button>
 
                         }
 
-                        <div> <a class="btn btn-dark" href="/Users/Show/@user.Id"> Show </a> </div>
+                        <div> <a class="btn btn-dark TF_submit_btn" href="/Users/Show/@user.Id"> Show </a> </div>
 
                     </div>
                 </div>
@@ -71,7 +71,7 @@
     <nav aria-label="Users navigation">
         <ul class="pagination">
             <li class="page-item">
-                <a class="page-link"
+                <a class="page-link TF_submit_btn"
                    href="/Users/Index?page=1" aria-label="Previous">
                     <span aria-hidden="true">&laquo;</span>
                 </a>
@@ -79,13 +79,13 @@
             @for (int i = 1; i <= ViewBag.lastPage; i++)
             {
                 <li class="page-item">
-                    <a class="page-link"
+                    <a class="page-link TF_submit_btn"
                        href="/Users/Index?page=@i">@(i)</a>
                 </li>
             }
 
             <li class="page-item">
-                <a class="page-link"
+                <a class="page-link TF_submit_btn"
                    href="/Users/Index?page=@(ViewBag.lastPage)" arialabel="Next">
                     <span aria-hidden="true">&raquo;</span>
                 </a>
