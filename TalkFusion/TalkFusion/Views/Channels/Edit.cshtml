@@ -16,7 +16,7 @@
         @using (Html.BeginForm(actionName: "Edit",
         controllerName: "Channels",
         method: FormMethod.Post,
-         new { @class = "TF_container mx-auto" }))
+        new { @class = "TF_container mx-auto" }))
         {
             @Html.HiddenFor(model => model.Id)
             @Html.Label("Title","Channel title", new { @class = "TF_text" })
